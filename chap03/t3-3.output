@@ -1,0 +1,130 @@
+State 1 conflicts: 2 shift/reduce, 1 reduce/reduce
+State 2 conflicts: 2 shift/reduce, 1 reduce/reduce
+
+
+Grammar
+
+    0 $accept: x $end
+
+    1 x: %empty
+    2  | A x A
+    3  | B x B
+    4  | A
+    5  | B
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+A (258) 2 4
+B (259) 3 5
+
+
+Nonterminals, with rules where they appear
+
+$accept (5)
+    on left: 0
+x (6)
+    on left: 1 2 3 4 5, on right: 0 2 3
+
+
+State 0
+
+    0 $accept: . x $end
+    1 x: . %empty
+    2  | . A x A  $
+    3  | . B x B  $
+    4  | . A      $
+    5  | . B      $
+
+    A  shift, and go to state 1
+    B  shift, and go to state 2
+
+    $default  reduce using rule 1 (x)
+
+    x  go to state 3
+
+
+State 1
+
+    1 x: . %empty
+    2  | . A x A  A,B
+    2  | A . x A  $
+    3  | . B x B  A,B
+    4  | . A      A,B
+    4  | A .      $
+    5  | . B      A,B
+
+    A  shift, and go to state 1
+    B  shift, and go to state 2
+
+    A         [reduce using rule 1 (x)]
+    A         [reduce using rule 4 (x)]
+    B         [reduce using rule 4 (x)]
+    $default  reduce using rule 4 (x)
+
+    x  go to state 4
+
+
+State 2
+
+    1 x: . %empty
+    2  | . A x A
+    3  | . B x B
+    3  | B . x B
+    4  | . A
+    5  | . B
+    5  | B .
+
+    A  shift, and go to state 1
+    B  shift, and go to state 2
+
+    A         [reduce using rule 5 (x)]
+    B         [reduce using rule 1 (x)]
+    B         [reduce using rule 5 (x)]
+    $default  reduce using rule 5 (x)
+
+    x  go to state 5
+
+
+State 3
+
+    0 $accept: x . $end
+
+    $end  shift, and go to state 6
+
+
+State 4
+
+    2 x: A x . A
+
+    A  shift, and go to state 7
+
+
+State 5
+
+    3 x: B x . B
+
+    B  shift, and go to state 8
+
+
+State 6
+
+    0 $accept: x $end .
+
+    $default  accept
+
+
+State 7
+
+    2 x: A x A .
+
+    $default  reduce using rule 2 (x)
+
+
+State 8
+
+    3 x: B x B .
+
+    $default  reduce using rule 3 (x)

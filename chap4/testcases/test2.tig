@@ -1,0 +1,12 @@
+let
+	type myint = int
+	type  arrtype = array of myint
+        type  retype = {name:string,age:int}
+	var arr1:arrtype := arrtype [10] of 0
+        var arr2:retype := retype {name="hi",age=12}
+        function tt(age:int,name:string):string = 1
+        function qq() = 2
+in
+	for i := 2 to 3 do 5 / 9;
+        3 / 4
+end

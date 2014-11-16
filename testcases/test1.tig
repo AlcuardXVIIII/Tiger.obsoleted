@@ -1,0 +1,14 @@
+/* an array type and an array variable */
+let
+	type  arrtype = array of int
+        type  nonarray = int
+        type  arrtype2 = arrtype
+        type  rec = {inf:rec2,oth:other}
+        type  other={s:int}
+        type  rec2= {name:string,age:int}
+	var arr1:arrtype := arrtype2 [10] of 0
+        var info:rec2 := rec2{name="3",age=1}
+        var rec1:rec := rec{inf=info,oth=nil}
+in
+        arr1 !! 0 := "d"        
+end

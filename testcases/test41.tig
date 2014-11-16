@@ -1,0 +1,11 @@
+/* local types hide global */
+let
+	type a = int
+in
+	let
+		type a = string
+                var t:a := 1
+	in
+		t > 2
+	end
+end

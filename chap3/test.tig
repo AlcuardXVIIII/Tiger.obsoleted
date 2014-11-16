@@ -1,0 +1,10 @@
+let
+        type  Arrtype = array of Int
+        var arr1:Arrtype := Arrtype [10] of 0 / 3
+in
+        while 1 do 1 / 2;
+        if 1 then if 2 then 3 else  4;
+        if 1 then 1 else 1 / 2;
+        for t:=3 to 4 do 1 / 3
+
+end

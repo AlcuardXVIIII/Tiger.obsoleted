@@ -1,0 +1,5202 @@
+State 47 conflicts: 1 shift/reduce
+State 50 conflicts: 1 shift/reduce
+State 111 conflicts: 13 shift/reduce
+State 112 conflicts: 12 shift/reduce
+State 136 conflicts: 12 shift/reduce
+State 138 conflicts: 12 shift/reduce
+State 155 conflicts: 12 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: exp
+
+    2 lvalue: ID
+    3       | lvalue DOT ID
+    4       | lvalue LBRACK exp RBRACK
+
+    5 exp: varExp
+    6    | nilExp
+    7    | intExp
+    8    | stringExp
+    9    | binaryOpExp
+   10    | unaryOpExp
+   11    | callExp
+   12    | seqExp
+   13    | assignExp
+   14    | recordCreateExp
+   15    | arrayCreateExp
+   16    | ifExp
+   17    | whileExp
+   18    | forExp
+   19    | breakExp
+   20    | letExp
+
+   21 varExp: lvalue
+
+   22 nilExp: NIL
+
+   23 intExp: INT
+
+   24 stringExp: STRING
+
+   25 callExp: ID LPAREN argList RPAREN
+
+   26 argList: %empty
+   27        | exp argList_
+
+   28 argList_: %empty
+   29         | COMMA exp argList_
+
+   30 binaryOpExp: exp PLUS exp
+   31            | exp MINUS exp
+   32            | exp TIMES exp
+   33            | exp DIVIDE exp
+   34            | exp EQ exp
+   35            | exp NEQ exp
+   36            | exp LT exp
+   37            | exp LE exp
+   38            | exp GT exp
+   39            | exp GE exp
+   40            | exp AND exp
+   41            | exp OR exp
+
+   42 unaryOpExp: MINUS exp
+
+   43 recordCreateExp: TYPE_ID LBRACE efieldList RBRACE
+
+   44 efield: ID EQ exp
+
+   45 efieldList: %empty
+   46           | efield efieldList_
+
+   47 efieldList_: %empty
+   48            | COMMA efield efieldList_
+
+   49 seqExp: LPAREN seqList RPAREN
+
+   50 seqList: exp
+   51        | exp SEMICOLON seqList
+
+   52 assignExp: lvalue ASSIGN exp
+
+   53 ifExp: IF exp THEN exp ELSE exp
+   54      | IF exp THEN exp
+
+   55 whileExp: WHILE exp DO exp
+
+   56 forExp: FOR ID ASSIGN exp TO exp DO exp
+
+   57 breakExp: BREAK
+
+   58 letExp: LET decs IN seqList END
+
+   59 arrayCreateExp: TYPE_ID LBRACK exp RBRACK OF exp
+
+   60 decs: dec
+   61     | dec decs
+
+   62 dec: funcdec
+   63    | vardec
+   64    | tydec
+
+   65 tydec: nametyList
+
+   66 nametyList: nameTy
+   67           | nameTy nametyList
+
+   68 nameTy: TYPE TYPE_ID EQ TYPE_ID
+   69       | TYPE TYPE_ID EQ LBRACE fieldList RBRACE
+   70       | TYPE TYPE_ID EQ ARRAY OF TYPE_ID
+
+   71 field: ID COLON TYPE_ID
+
+   72 fieldList: %empty
+   73          | field fieldList_
+
+   74 fieldList_: %empty
+   75           | COMMA field fieldList_
+
+   76 funcdec: functydecList
+
+   77 functydecList: functydec
+   78              | functydec functydecList
+
+   79 functydec: FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | FUNCTION ID LPAREN fieldList RPAREN EQ exp
+
+   81 vardec: VAR ID ASSIGN exp
+   82       | VAR ID COLON TYPE_ID ASSIGN exp
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+ID (258) 2 3 25 44 56 71 79 80 81 82
+STRING (259) 24
+TYPE_ID (260) 43 59 68 69 70 71 79 82
+INT (261) 23
+COMMA (262) 29 48 75
+COLON (263) 71 79 82
+SEMICOLON (264) 51
+LPAREN (265) 25 49 79 80
+RPAREN (266) 25 49 79 80
+LBRACK (267) 4 59
+RBRACK (268) 4 59
+LBRACE (269) 43 69
+RBRACE (270) 43 69
+DOT (271) 3
+ASSIGN (272) 52 56 81 82
+ARRAY (273) 70
+IF (274) 53 54
+THEN (275) 53 54
+ELSE (276) 53
+WHILE (277) 55
+FOR (278) 56
+TO (279) 56
+LET (280) 58
+IN (281) 58
+END (282) 58
+OF (283) 59 70
+DO (284) 55 56
+BREAK (285) 57
+NIL (286) 22
+FUNCTION (287) 79 80
+VAR (288) 81 82
+TYPE (289) 68 69 70
+OR (290) 41
+AND (291) 40
+EQ (292) 34 44 68 69 70 79 80
+NEQ (293) 35
+LT (294) 36
+LE (295) 37
+GT (296) 38
+GE (297) 39
+PLUS (298) 30
+MINUS (299) 31 42
+TIMES (300) 32
+DIVIDE (301) 33
+UMINUS (302)
+
+
+Nonterminals, with rules where they appear
+
+$accept (48)
+    on left: 0
+program (49)
+    on left: 1, on right: 0
+lvalue (50)
+    on left: 2 3 4, on right: 3 4 21 52
+exp (51)
+    on left: 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20, on right:
+    1 4 27 29 30 31 32 33 34 35 36 37 38 39 40 41 42 44 50 51 52 53
+    54 55 56 59 79 80 81 82
+varExp (52)
+    on left: 21, on right: 5
+nilExp (53)
+    on left: 22, on right: 6
+intExp (54)
+    on left: 23, on right: 7
+stringExp (55)
+    on left: 24, on right: 8
+callExp (56)
+    on left: 25, on right: 11
+argList (57)
+    on left: 26 27, on right: 25
+argList_ (58)
+    on left: 28 29, on right: 27 29
+binaryOpExp (59)
+    on left: 30 31 32 33 34 35 36 37 38 39 40 41, on right: 9
+unaryOpExp (60)
+    on left: 42, on right: 10
+recordCreateExp (61)
+    on left: 43, on right: 14
+efield (62)
+    on left: 44, on right: 46 48
+efieldList (63)
+    on left: 45 46, on right: 43
+efieldList_ (64)
+    on left: 47 48, on right: 46 48
+seqExp (65)
+    on left: 49, on right: 12
+seqList (66)
+    on left: 50 51, on right: 49 51 58
+assignExp (67)
+    on left: 52, on right: 13
+ifExp (68)
+    on left: 53 54, on right: 16
+whileExp (69)
+    on left: 55, on right: 17
+forExp (70)
+    on left: 56, on right: 18
+breakExp (71)
+    on left: 57, on right: 19
+letExp (72)
+    on left: 58, on right: 20
+arrayCreateExp (73)
+    on left: 59, on right: 15
+decs (74)
+    on left: 60 61, on right: 58 61
+dec (75)
+    on left: 62 63 64, on right: 60 61
+tydec (76)
+    on left: 65, on right: 64
+nametyList (77)
+    on left: 66 67, on right: 65 67
+nameTy (78)
+    on left: 68 69 70, on right: 66 67
+field (79)
+    on left: 71, on right: 73 75
+fieldList (80)
+    on left: 72 73, on right: 69 79 80
+fieldList_ (81)
+    on left: 74 75, on right: 73 75
+funcdec (82)
+    on left: 76, on right: 62
+functydecList (83)
+    on left: 77 78, on right: 76 78
+functydec (84)
+    on left: 79 80, on right: 77 78
+vardec (85)
+    on left: 81 82, on right: 63
+
+
+State 0
+
+    0 $accept: . program $end
+    1 program: . exp
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    program          go to state 13
+    lvalue           go to state 14
+    exp              go to state 15
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 1
+
+    2 lvalue: ID .
+   25 callExp: ID . LPAREN argList RPAREN
+
+    LPAREN  shift, and go to state 32
+
+    $default  reduce using rule 2 (lvalue)
+
+
+State 2
+
+   24 stringExp: STRING .
+
+    $default  reduce using rule 24 (stringExp)
+
+
+State 3
+
+   43 recordCreateExp: TYPE_ID . LBRACE efieldList RBRACE
+   59 arrayCreateExp: TYPE_ID . LBRACK exp RBRACK OF exp
+
+    LBRACK  shift, and go to state 33
+    LBRACE  shift, and go to state 34
+
+
+State 4
+
+   23 intExp: INT .
+
+    $default  reduce using rule 23 (intExp)
+
+
+State 5
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   49       | LPAREN . seqList RPAREN
+   50 seqList: . exp
+   51        | . exp SEMICOLON seqList
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 35
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    seqList          go to state 36
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 6
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   53      | IF . exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   54      | IF . exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 37
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 7
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   55         | WHILE . exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 38
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 8
+
+   56 forExp: FOR . ID ASSIGN exp TO exp DO exp
+
+    ID  shift, and go to state 39
+
+
+State 9
+
+   58 letExp: LET . decs IN seqList END
+   60 decs: . dec
+   61     | . dec decs
+   62 dec: . funcdec
+   63    | . vardec
+   64    | . tydec
+   65 tydec: . nametyList
+   66 nametyList: . nameTy
+   67           | . nameTy nametyList
+   68 nameTy: . TYPE TYPE_ID EQ TYPE_ID
+   69       | . TYPE TYPE_ID EQ LBRACE fieldList RBRACE
+   70       | . TYPE TYPE_ID EQ ARRAY OF TYPE_ID
+   76 funcdec: . functydecList
+   77 functydecList: . functydec
+   78              | . functydec functydecList
+   79 functydec: . FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | . FUNCTION ID LPAREN fieldList RPAREN EQ exp
+   81 vardec: . VAR ID ASSIGN exp
+   82       | . VAR ID COLON TYPE_ID ASSIGN exp
+
+    FUNCTION  shift, and go to state 40
+    VAR       shift, and go to state 41
+    TYPE      shift, and go to state 42
+
+    decs           go to state 43
+    dec            go to state 44
+    tydec          go to state 45
+    nametyList     go to state 46
+    nameTy         go to state 47
+    funcdec        go to state 48
+    functydecList  go to state 49
+    functydec      go to state 50
+    vardec         go to state 51
+
+
+State 10
+
+   57 breakExp: BREAK .
+
+    $default  reduce using rule 57 (breakExp)
+
+
+State 11
+
+   22 nilExp: NIL .
+
+    $default  reduce using rule 22 (nilExp)
+
+
+State 12
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   42           | MINUS . exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 52
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 13
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 53
+
+
+State 14
+
+    3 lvalue: lvalue . DOT ID
+    4       | lvalue . LBRACK exp RBRACK
+   21 varExp: lvalue .
+   52 assignExp: lvalue . ASSIGN exp
+
+    LBRACK  shift, and go to state 54
+    DOT     shift, and go to state 55
+    ASSIGN  shift, and go to state 56
+
+    $default  reduce using rule 21 (varExp)
+
+
+State 15
+
+    1 program: exp .
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 1 (program)
+
+
+State 16
+
+    5 exp: varExp .
+
+    $default  reduce using rule 5 (exp)
+
+
+State 17
+
+    6 exp: nilExp .
+
+    $default  reduce using rule 6 (exp)
+
+
+State 18
+
+    7 exp: intExp .
+
+    $default  reduce using rule 7 (exp)
+
+
+State 19
+
+    8 exp: stringExp .
+
+    $default  reduce using rule 8 (exp)
+
+
+State 20
+
+   11 exp: callExp .
+
+    $default  reduce using rule 11 (exp)
+
+
+State 21
+
+    9 exp: binaryOpExp .
+
+    $default  reduce using rule 9 (exp)
+
+
+State 22
+
+   10 exp: unaryOpExp .
+
+    $default  reduce using rule 10 (exp)
+
+
+State 23
+
+   14 exp: recordCreateExp .
+
+    $default  reduce using rule 14 (exp)
+
+
+State 24
+
+   12 exp: seqExp .
+
+    $default  reduce using rule 12 (exp)
+
+
+State 25
+
+   13 exp: assignExp .
+
+    $default  reduce using rule 13 (exp)
+
+
+State 26
+
+   16 exp: ifExp .
+
+    $default  reduce using rule 16 (exp)
+
+
+State 27
+
+   17 exp: whileExp .
+
+    $default  reduce using rule 17 (exp)
+
+
+State 28
+
+   18 exp: forExp .
+
+    $default  reduce using rule 18 (exp)
+
+
+State 29
+
+   19 exp: breakExp .
+
+    $default  reduce using rule 19 (exp)
+
+
+State 30
+
+   20 exp: letExp .
+
+    $default  reduce using rule 20 (exp)
+
+
+State 31
+
+   15 exp: arrayCreateExp .
+
+    $default  reduce using rule 15 (exp)
+
+
+State 32
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   25        | ID LPAREN . argList RPAREN
+   26 argList: . %empty
+   27        | . exp argList_
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    $default  reduce using rule 26 (argList)
+
+    lvalue           go to state 14
+    exp              go to state 69
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    argList          go to state 70
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 33
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+   59               | TYPE_ID LBRACK . exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 71
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 34
+
+   43 recordCreateExp: TYPE_ID LBRACE . efieldList RBRACE
+   44 efield: . ID EQ exp
+   45 efieldList: . %empty
+   46           | . efield efieldList_
+
+    ID  shift, and go to state 72
+
+    $default  reduce using rule 45 (efieldList)
+
+    efield      go to state 73
+    efieldList  go to state 74
+
+
+State 35
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   50 seqList: exp .
+   51        | exp . SEMICOLON seqList
+
+    SEMICOLON  shift, and go to state 75
+    OR         shift, and go to state 57
+    AND        shift, and go to state 58
+    EQ         shift, and go to state 59
+    NEQ        shift, and go to state 60
+    LT         shift, and go to state 61
+    LE         shift, and go to state 62
+    GT         shift, and go to state 63
+    GE         shift, and go to state 64
+    PLUS       shift, and go to state 65
+    MINUS      shift, and go to state 66
+    TIMES      shift, and go to state 67
+    DIVIDE     shift, and go to state 68
+
+    $default  reduce using rule 50 (seqList)
+
+
+State 36
+
+   49 seqExp: LPAREN seqList . RPAREN
+
+    RPAREN  shift, and go to state 76
+
+
+State 37
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   53 ifExp: IF exp . THEN exp ELSE exp
+   54      | IF exp . THEN exp
+
+    THEN    shift, and go to state 77
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+
+State 38
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   55 whileExp: WHILE exp . DO exp
+
+    DO      shift, and go to state 78
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+
+State 39
+
+   56 forExp: FOR ID . ASSIGN exp TO exp DO exp
+
+    ASSIGN  shift, and go to state 79
+
+
+State 40
+
+   79 functydec: FUNCTION . ID LPAREN fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | FUNCTION . ID LPAREN fieldList RPAREN EQ exp
+
+    ID  shift, and go to state 80
+
+
+State 41
+
+   81 vardec: VAR . ID ASSIGN exp
+   82       | VAR . ID COLON TYPE_ID ASSIGN exp
+
+    ID  shift, and go to state 81
+
+
+State 42
+
+   68 nameTy: TYPE . TYPE_ID EQ TYPE_ID
+   69       | TYPE . TYPE_ID EQ LBRACE fieldList RBRACE
+   70       | TYPE . TYPE_ID EQ ARRAY OF TYPE_ID
+
+    TYPE_ID  shift, and go to state 82
+
+
+State 43
+
+   58 letExp: LET decs . IN seqList END
+
+    IN  shift, and go to state 83
+
+
+State 44
+
+   60 decs: . dec
+   60     | dec .
+   61     | . dec decs
+   61     | dec . decs
+   62 dec: . funcdec
+   63    | . vardec
+   64    | . tydec
+   65 tydec: . nametyList
+   66 nametyList: . nameTy
+   67           | . nameTy nametyList
+   68 nameTy: . TYPE TYPE_ID EQ TYPE_ID
+   69       | . TYPE TYPE_ID EQ LBRACE fieldList RBRACE
+   70       | . TYPE TYPE_ID EQ ARRAY OF TYPE_ID
+   76 funcdec: . functydecList
+   77 functydecList: . functydec
+   78              | . functydec functydecList
+   79 functydec: . FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | . FUNCTION ID LPAREN fieldList RPAREN EQ exp
+   81 vardec: . VAR ID ASSIGN exp
+   82       | . VAR ID COLON TYPE_ID ASSIGN exp
+
+    FUNCTION  shift, and go to state 40
+    VAR       shift, and go to state 41
+    TYPE      shift, and go to state 42
+
+    $default  reduce using rule 60 (decs)
+
+    decs           go to state 84
+    dec            go to state 44
+    tydec          go to state 45
+    nametyList     go to state 46
+    nameTy         go to state 47
+    funcdec        go to state 48
+    functydecList  go to state 49
+    functydec      go to state 50
+    vardec         go to state 51
+
+
+State 45
+
+   64 dec: tydec .
+
+    $default  reduce using rule 64 (dec)
+
+
+State 46
+
+   65 tydec: nametyList .
+
+    $default  reduce using rule 65 (tydec)
+
+
+State 47
+
+   66 nametyList: . nameTy
+   66           | nameTy .
+   67           | . nameTy nametyList
+   67           | nameTy . nametyList
+   68 nameTy: . TYPE TYPE_ID EQ TYPE_ID
+   69       | . TYPE TYPE_ID EQ LBRACE fieldList RBRACE
+   70       | . TYPE TYPE_ID EQ ARRAY OF TYPE_ID
+
+    TYPE  shift, and go to state 42
+
+    TYPE      [reduce using rule 66 (nametyList)]
+    $default  reduce using rule 66 (nametyList)
+
+    nametyList  go to state 85
+    nameTy      go to state 47
+
+
+State 48
+
+   62 dec: funcdec .
+
+    $default  reduce using rule 62 (dec)
+
+
+State 49
+
+   76 funcdec: functydecList .
+
+    $default  reduce using rule 76 (funcdec)
+
+
+State 50
+
+   77 functydecList: . functydec
+   77              | functydec .
+   78              | . functydec functydecList
+   78              | functydec . functydecList
+   79 functydec: . FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | . FUNCTION ID LPAREN fieldList RPAREN EQ exp
+
+    FUNCTION  shift, and go to state 40
+
+    FUNCTION  [reduce using rule 77 (functydecList)]
+    $default  reduce using rule 77 (functydecList)
+
+    functydecList  go to state 86
+    functydec      go to state 50
+
+
+State 51
+
+   63 dec: vardec .
+
+    $default  reduce using rule 63 (dec)
+
+
+State 52
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   42 unaryOpExp: MINUS exp .
+
+    $default  reduce using rule 42 (unaryOpExp)
+
+
+State 53
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 54
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    4       | lvalue LBRACK . exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 87
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 55
+
+    3 lvalue: lvalue DOT . ID
+
+    ID  shift, and go to state 88
+
+
+State 56
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   52          | lvalue ASSIGN . exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 89
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 57
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   41            | exp OR . exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 90
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 58
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   40            | exp AND . exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 91
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 59
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   34            | exp EQ . exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 92
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 60
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   35            | exp NEQ . exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 93
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 61
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   36            | exp LT . exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 94
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 62
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   37            | exp LE . exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 95
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 63
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   38            | exp GT . exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 96
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 64
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   39            | exp GE . exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 97
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 65
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   30            | exp PLUS . exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 98
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 66
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   31            | exp MINUS . exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 99
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 67
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   32            | exp TIMES . exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 100
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 68
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   33            | exp DIVIDE . exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 101
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 69
+
+   27 argList: exp . argList_
+   28 argList_: . %empty
+   29         | . COMMA exp argList_
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    COMMA   shift, and go to state 102
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 28 (argList_)
+
+    argList_  go to state 103
+
+
+State 70
+
+   25 callExp: ID LPAREN argList . RPAREN
+
+    RPAREN  shift, and go to state 104
+
+
+State 71
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   59 arrayCreateExp: TYPE_ID LBRACK exp . RBRACK OF exp
+
+    RBRACK  shift, and go to state 105
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+
+State 72
+
+   44 efield: ID . EQ exp
+
+    EQ  shift, and go to state 106
+
+
+State 73
+
+   46 efieldList: efield . efieldList_
+   47 efieldList_: . %empty
+   48            | . COMMA efield efieldList_
+
+    COMMA  shift, and go to state 107
+
+    $default  reduce using rule 47 (efieldList_)
+
+    efieldList_  go to state 108
+
+
+State 74
+
+   43 recordCreateExp: TYPE_ID LBRACE efieldList . RBRACE
+
+    RBRACE  shift, and go to state 109
+
+
+State 75
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   50 seqList: . exp
+   51        | . exp SEMICOLON seqList
+   51        | exp SEMICOLON . seqList
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 35
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    seqList          go to state 110
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 76
+
+   49 seqExp: LPAREN seqList RPAREN .
+
+    $default  reduce using rule 49 (seqExp)
+
+
+State 77
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   53      | IF exp THEN . exp ELSE exp
+   54      | . IF exp THEN exp
+   54      | IF exp THEN . exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 111
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 78
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   55         | WHILE exp DO . exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 112
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 79
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   56       | FOR ID ASSIGN . exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 113
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 80
+
+   79 functydec: FUNCTION ID . LPAREN fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | FUNCTION ID . LPAREN fieldList RPAREN EQ exp
+
+    LPAREN  shift, and go to state 114
+
+
+State 81
+
+   81 vardec: VAR ID . ASSIGN exp
+   82       | VAR ID . COLON TYPE_ID ASSIGN exp
+
+    COLON   shift, and go to state 115
+    ASSIGN  shift, and go to state 116
+
+
+State 82
+
+   68 nameTy: TYPE TYPE_ID . EQ TYPE_ID
+   69       | TYPE TYPE_ID . EQ LBRACE fieldList RBRACE
+   70       | TYPE TYPE_ID . EQ ARRAY OF TYPE_ID
+
+    EQ  shift, and go to state 117
+
+
+State 83
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   50 seqList: . exp
+   51        | . exp SEMICOLON seqList
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   58       | LET decs IN . seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 35
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    seqList          go to state 118
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 84
+
+   61 decs: dec decs .
+
+    $default  reduce using rule 61 (decs)
+
+
+State 85
+
+   67 nametyList: nameTy nametyList .
+
+    $default  reduce using rule 67 (nametyList)
+
+
+State 86
+
+   78 functydecList: functydec functydecList .
+
+    $default  reduce using rule 78 (functydecList)
+
+
+State 87
+
+    4 lvalue: lvalue LBRACK exp . RBRACK
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    RBRACK  shift, and go to state 119
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+
+State 88
+
+    3 lvalue: lvalue DOT ID .
+
+    $default  reduce using rule 3 (lvalue)
+
+
+State 89
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   52 assignExp: lvalue ASSIGN exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 52 (assignExp)
+
+
+State 90
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   41            | exp OR exp .
+
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 41 (binaryOpExp)
+
+
+State 91
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   40            | exp AND exp .
+   41            | exp . OR exp
+
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 40 (binaryOpExp)
+
+
+State 92
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   34            | exp EQ exp .
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    EQ   error (nonassociative)
+    NEQ  error (nonassociative)
+    LT   error (nonassociative)
+    LE   error (nonassociative)
+    GT   error (nonassociative)
+    GE   error (nonassociative)
+
+    $default  reduce using rule 34 (binaryOpExp)
+
+
+State 93
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   35            | exp NEQ exp .
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    EQ   error (nonassociative)
+    NEQ  error (nonassociative)
+    LT   error (nonassociative)
+    LE   error (nonassociative)
+    GT   error (nonassociative)
+    GE   error (nonassociative)
+
+    $default  reduce using rule 35 (binaryOpExp)
+
+
+State 94
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   36            | exp LT exp .
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    EQ   error (nonassociative)
+    NEQ  error (nonassociative)
+    LT   error (nonassociative)
+    LE   error (nonassociative)
+    GT   error (nonassociative)
+    GE   error (nonassociative)
+
+    $default  reduce using rule 36 (binaryOpExp)
+
+
+State 95
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   37            | exp LE exp .
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    EQ   error (nonassociative)
+    NEQ  error (nonassociative)
+    LT   error (nonassociative)
+    LE   error (nonassociative)
+    GT   error (nonassociative)
+    GE   error (nonassociative)
+
+    $default  reduce using rule 37 (binaryOpExp)
+
+
+State 96
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   38            | exp GT exp .
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    EQ   error (nonassociative)
+    NEQ  error (nonassociative)
+    LT   error (nonassociative)
+    LE   error (nonassociative)
+    GT   error (nonassociative)
+    GE   error (nonassociative)
+
+    $default  reduce using rule 38 (binaryOpExp)
+
+
+State 97
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   39            | exp GE exp .
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    EQ   error (nonassociative)
+    NEQ  error (nonassociative)
+    LT   error (nonassociative)
+    LE   error (nonassociative)
+    GT   error (nonassociative)
+    GE   error (nonassociative)
+
+    $default  reduce using rule 39 (binaryOpExp)
+
+
+State 98
+
+   30 binaryOpExp: exp . PLUS exp
+   30            | exp PLUS exp .
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 30 (binaryOpExp)
+
+
+State 99
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   31            | exp MINUS exp .
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 31 (binaryOpExp)
+
+
+State 100
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   32            | exp TIMES exp .
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    $default  reduce using rule 32 (binaryOpExp)
+
+
+State 101
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   33            | exp DIVIDE exp .
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    $default  reduce using rule 33 (binaryOpExp)
+
+
+State 102
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   29 argList_: COMMA . exp argList_
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 120
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 103
+
+   27 argList: exp argList_ .
+
+    $default  reduce using rule 27 (argList)
+
+
+State 104
+
+   25 callExp: ID LPAREN argList RPAREN .
+
+    $default  reduce using rule 25 (callExp)
+
+
+State 105
+
+   59 arrayCreateExp: TYPE_ID LBRACK exp RBRACK . OF exp
+
+    OF  shift, and go to state 121
+
+
+State 106
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   44 efield: ID EQ . exp
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 122
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 107
+
+   44 efield: . ID EQ exp
+   48 efieldList_: COMMA . efield efieldList_
+
+    ID  shift, and go to state 72
+
+    efield  go to state 123
+
+
+State 108
+
+   46 efieldList: efield efieldList_ .
+
+    $default  reduce using rule 46 (efieldList)
+
+
+State 109
+
+   43 recordCreateExp: TYPE_ID LBRACE efieldList RBRACE .
+
+    $default  reduce using rule 43 (recordCreateExp)
+
+
+State 110
+
+   51 seqList: exp SEMICOLON seqList .
+
+    $default  reduce using rule 51 (seqList)
+
+
+State 111
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   53 ifExp: IF exp THEN exp . ELSE exp
+   54      | IF exp THEN exp .
+
+    ELSE    shift, and go to state 124
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    ELSE      [reduce using rule 54 (ifExp)]
+    OR        [reduce using rule 54 (ifExp)]
+    AND       [reduce using rule 54 (ifExp)]
+    EQ        [reduce using rule 54 (ifExp)]
+    NEQ       [reduce using rule 54 (ifExp)]
+    LT        [reduce using rule 54 (ifExp)]
+    LE        [reduce using rule 54 (ifExp)]
+    GT        [reduce using rule 54 (ifExp)]
+    GE        [reduce using rule 54 (ifExp)]
+    PLUS      [reduce using rule 54 (ifExp)]
+    MINUS     [reduce using rule 54 (ifExp)]
+    TIMES     [reduce using rule 54 (ifExp)]
+    DIVIDE    [reduce using rule 54 (ifExp)]
+    $default  reduce using rule 54 (ifExp)
+
+
+State 112
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   55 whileExp: WHILE exp DO exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    OR        [reduce using rule 55 (whileExp)]
+    AND       [reduce using rule 55 (whileExp)]
+    EQ        [reduce using rule 55 (whileExp)]
+    NEQ       [reduce using rule 55 (whileExp)]
+    LT        [reduce using rule 55 (whileExp)]
+    LE        [reduce using rule 55 (whileExp)]
+    GT        [reduce using rule 55 (whileExp)]
+    GE        [reduce using rule 55 (whileExp)]
+    PLUS      [reduce using rule 55 (whileExp)]
+    MINUS     [reduce using rule 55 (whileExp)]
+    TIMES     [reduce using rule 55 (whileExp)]
+    DIVIDE    [reduce using rule 55 (whileExp)]
+    $default  reduce using rule 55 (whileExp)
+
+
+State 113
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   56 forExp: FOR ID ASSIGN exp . TO exp DO exp
+
+    TO      shift, and go to state 125
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+
+State 114
+
+   71 field: . ID COLON TYPE_ID
+   72 fieldList: . %empty
+   73          | . field fieldList_
+   79 functydec: FUNCTION ID LPAREN . fieldList RPAREN COLON TYPE_ID EQ exp
+   80          | FUNCTION ID LPAREN . fieldList RPAREN EQ exp
+
+    ID  shift, and go to state 126
+
+    $default  reduce using rule 72 (fieldList)
+
+    field      go to state 127
+    fieldList  go to state 128
+
+
+State 115
+
+   82 vardec: VAR ID COLON . TYPE_ID ASSIGN exp
+
+    TYPE_ID  shift, and go to state 129
+
+
+State 116
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+   81 vardec: VAR ID ASSIGN . exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 130
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 117
+
+   68 nameTy: TYPE TYPE_ID EQ . TYPE_ID
+   69       | TYPE TYPE_ID EQ . LBRACE fieldList RBRACE
+   70       | TYPE TYPE_ID EQ . ARRAY OF TYPE_ID
+
+    TYPE_ID  shift, and go to state 131
+    LBRACE   shift, and go to state 132
+    ARRAY    shift, and go to state 133
+
+
+State 118
+
+   58 letExp: LET decs IN seqList . END
+
+    END  shift, and go to state 134
+
+
+State 119
+
+    4 lvalue: lvalue LBRACK exp RBRACK .
+
+    $default  reduce using rule 4 (lvalue)
+
+
+State 120
+
+   28 argList_: . %empty
+   29         | . COMMA exp argList_
+   29         | COMMA exp . argList_
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+
+    COMMA   shift, and go to state 102
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 28 (argList_)
+
+    argList_  go to state 135
+
+
+State 121
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+   59               | TYPE_ID LBRACK exp RBRACK OF . exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 136
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 122
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   44 efield: ID EQ exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 44 (efield)
+
+
+State 123
+
+   47 efieldList_: . %empty
+   48            | . COMMA efield efieldList_
+   48            | COMMA efield . efieldList_
+
+    COMMA  shift, and go to state 107
+
+    $default  reduce using rule 47 (efieldList_)
+
+    efieldList_  go to state 137
+
+
+State 124
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   53      | IF exp THEN exp ELSE . exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 138
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 125
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   56       | FOR ID ASSIGN exp TO . exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 139
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 126
+
+   71 field: ID . COLON TYPE_ID
+
+    COLON  shift, and go to state 140
+
+
+State 127
+
+   73 fieldList: field . fieldList_
+   74 fieldList_: . %empty
+   75           | . COMMA field fieldList_
+
+    COMMA  shift, and go to state 141
+
+    $default  reduce using rule 74 (fieldList_)
+
+    fieldList_  go to state 142
+
+
+State 128
+
+   79 functydec: FUNCTION ID LPAREN fieldList . RPAREN COLON TYPE_ID EQ exp
+   80          | FUNCTION ID LPAREN fieldList . RPAREN EQ exp
+
+    RPAREN  shift, and go to state 143
+
+
+State 129
+
+   82 vardec: VAR ID COLON TYPE_ID . ASSIGN exp
+
+    ASSIGN  shift, and go to state 144
+
+
+State 130
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   81 vardec: VAR ID ASSIGN exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 81 (vardec)
+
+
+State 131
+
+   68 nameTy: TYPE TYPE_ID EQ TYPE_ID .
+
+    $default  reduce using rule 68 (nameTy)
+
+
+State 132
+
+   69 nameTy: TYPE TYPE_ID EQ LBRACE . fieldList RBRACE
+   71 field: . ID COLON TYPE_ID
+   72 fieldList: . %empty
+   73          | . field fieldList_
+
+    ID  shift, and go to state 126
+
+    $default  reduce using rule 72 (fieldList)
+
+    field      go to state 127
+    fieldList  go to state 145
+
+
+State 133
+
+   70 nameTy: TYPE TYPE_ID EQ ARRAY . OF TYPE_ID
+
+    OF  shift, and go to state 146
+
+
+State 134
+
+   58 letExp: LET decs IN seqList END .
+
+    $default  reduce using rule 58 (letExp)
+
+
+State 135
+
+   29 argList_: COMMA exp argList_ .
+
+    $default  reduce using rule 29 (argList_)
+
+
+State 136
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   59 arrayCreateExp: TYPE_ID LBRACK exp RBRACK OF exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    OR        [reduce using rule 59 (arrayCreateExp)]
+    AND       [reduce using rule 59 (arrayCreateExp)]
+    EQ        [reduce using rule 59 (arrayCreateExp)]
+    NEQ       [reduce using rule 59 (arrayCreateExp)]
+    LT        [reduce using rule 59 (arrayCreateExp)]
+    LE        [reduce using rule 59 (arrayCreateExp)]
+    GT        [reduce using rule 59 (arrayCreateExp)]
+    GE        [reduce using rule 59 (arrayCreateExp)]
+    PLUS      [reduce using rule 59 (arrayCreateExp)]
+    MINUS     [reduce using rule 59 (arrayCreateExp)]
+    TIMES     [reduce using rule 59 (arrayCreateExp)]
+    DIVIDE    [reduce using rule 59 (arrayCreateExp)]
+    $default  reduce using rule 59 (arrayCreateExp)
+
+
+State 137
+
+   48 efieldList_: COMMA efield efieldList_ .
+
+    $default  reduce using rule 48 (efieldList_)
+
+
+State 138
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   53 ifExp: IF exp THEN exp ELSE exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    OR        [reduce using rule 53 (ifExp)]
+    AND       [reduce using rule 53 (ifExp)]
+    EQ        [reduce using rule 53 (ifExp)]
+    NEQ       [reduce using rule 53 (ifExp)]
+    LT        [reduce using rule 53 (ifExp)]
+    LE        [reduce using rule 53 (ifExp)]
+    GT        [reduce using rule 53 (ifExp)]
+    GE        [reduce using rule 53 (ifExp)]
+    PLUS      [reduce using rule 53 (ifExp)]
+    MINUS     [reduce using rule 53 (ifExp)]
+    TIMES     [reduce using rule 53 (ifExp)]
+    DIVIDE    [reduce using rule 53 (ifExp)]
+    $default  reduce using rule 53 (ifExp)
+
+
+State 139
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   56 forExp: FOR ID ASSIGN exp TO exp . DO exp
+
+    DO      shift, and go to state 147
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+
+State 140
+
+   71 field: ID COLON . TYPE_ID
+
+    TYPE_ID  shift, and go to state 148
+
+
+State 141
+
+   71 field: . ID COLON TYPE_ID
+   75 fieldList_: COMMA . field fieldList_
+
+    ID  shift, and go to state 126
+
+    field  go to state 149
+
+
+State 142
+
+   73 fieldList: field fieldList_ .
+
+    $default  reduce using rule 73 (fieldList)
+
+
+State 143
+
+   79 functydec: FUNCTION ID LPAREN fieldList RPAREN . COLON TYPE_ID EQ exp
+   80          | FUNCTION ID LPAREN fieldList RPAREN . EQ exp
+
+    COLON  shift, and go to state 150
+    EQ     shift, and go to state 151
+
+
+State 144
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+   82 vardec: VAR ID COLON TYPE_ID ASSIGN . exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 152
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 145
+
+   69 nameTy: TYPE TYPE_ID EQ LBRACE fieldList . RBRACE
+
+    RBRACE  shift, and go to state 153
+
+
+State 146
+
+   70 nameTy: TYPE TYPE_ID EQ ARRAY OF . TYPE_ID
+
+    TYPE_ID  shift, and go to state 154
+
+
+State 147
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   56       | FOR ID ASSIGN exp TO exp DO . exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 155
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 148
+
+   71 field: ID COLON TYPE_ID .
+
+    $default  reduce using rule 71 (field)
+
+
+State 149
+
+   74 fieldList_: . %empty
+   75           | . COMMA field fieldList_
+   75           | COMMA field . fieldList_
+
+    COMMA  shift, and go to state 141
+
+    $default  reduce using rule 74 (fieldList_)
+
+    fieldList_  go to state 156
+
+
+State 150
+
+   79 functydec: FUNCTION ID LPAREN fieldList RPAREN COLON . TYPE_ID EQ exp
+
+    TYPE_ID  shift, and go to state 157
+
+
+State 151
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+   80 functydec: FUNCTION ID LPAREN fieldList RPAREN EQ . exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 158
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 152
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   82 vardec: VAR ID COLON TYPE_ID ASSIGN exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 82 (vardec)
+
+
+State 153
+
+   69 nameTy: TYPE TYPE_ID EQ LBRACE fieldList RBRACE .
+
+    $default  reduce using rule 69 (nameTy)
+
+
+State 154
+
+   70 nameTy: TYPE TYPE_ID EQ ARRAY OF TYPE_ID .
+
+    $default  reduce using rule 70 (nameTy)
+
+
+State 155
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   56 forExp: FOR ID ASSIGN exp TO exp DO exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    OR        [reduce using rule 56 (forExp)]
+    AND       [reduce using rule 56 (forExp)]
+    EQ        [reduce using rule 56 (forExp)]
+    NEQ       [reduce using rule 56 (forExp)]
+    LT        [reduce using rule 56 (forExp)]
+    LE        [reduce using rule 56 (forExp)]
+    GT        [reduce using rule 56 (forExp)]
+    GE        [reduce using rule 56 (forExp)]
+    PLUS      [reduce using rule 56 (forExp)]
+    MINUS     [reduce using rule 56 (forExp)]
+    TIMES     [reduce using rule 56 (forExp)]
+    DIVIDE    [reduce using rule 56 (forExp)]
+    $default  reduce using rule 56 (forExp)
+
+
+State 156
+
+   75 fieldList_: COMMA field fieldList_ .
+
+    $default  reduce using rule 75 (fieldList_)
+
+
+State 157
+
+   79 functydec: FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID . EQ exp
+
+    EQ  shift, and go to state 159
+
+
+State 158
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   80 functydec: FUNCTION ID LPAREN fieldList RPAREN EQ exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 80 (functydec)
+
+
+State 159
+
+    2 lvalue: . ID
+    3       | . lvalue DOT ID
+    4       | . lvalue LBRACK exp RBRACK
+    5 exp: . varExp
+    6    | . nilExp
+    7    | . intExp
+    8    | . stringExp
+    9    | . binaryOpExp
+   10    | . unaryOpExp
+   11    | . callExp
+   12    | . seqExp
+   13    | . assignExp
+   14    | . recordCreateExp
+   15    | . arrayCreateExp
+   16    | . ifExp
+   17    | . whileExp
+   18    | . forExp
+   19    | . breakExp
+   20    | . letExp
+   21 varExp: . lvalue
+   22 nilExp: . NIL
+   23 intExp: . INT
+   24 stringExp: . STRING
+   25 callExp: . ID LPAREN argList RPAREN
+   30 binaryOpExp: . exp PLUS exp
+   31            | . exp MINUS exp
+   32            | . exp TIMES exp
+   33            | . exp DIVIDE exp
+   34            | . exp EQ exp
+   35            | . exp NEQ exp
+   36            | . exp LT exp
+   37            | . exp LE exp
+   38            | . exp GT exp
+   39            | . exp GE exp
+   40            | . exp AND exp
+   41            | . exp OR exp
+   42 unaryOpExp: . MINUS exp
+   43 recordCreateExp: . TYPE_ID LBRACE efieldList RBRACE
+   49 seqExp: . LPAREN seqList RPAREN
+   52 assignExp: . lvalue ASSIGN exp
+   53 ifExp: . IF exp THEN exp ELSE exp
+   54      | . IF exp THEN exp
+   55 whileExp: . WHILE exp DO exp
+   56 forExp: . FOR ID ASSIGN exp TO exp DO exp
+   57 breakExp: . BREAK
+   58 letExp: . LET decs IN seqList END
+   59 arrayCreateExp: . TYPE_ID LBRACK exp RBRACK OF exp
+   79 functydec: FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID EQ . exp
+
+    ID       shift, and go to state 1
+    STRING   shift, and go to state 2
+    TYPE_ID  shift, and go to state 3
+    INT      shift, and go to state 4
+    LPAREN   shift, and go to state 5
+    IF       shift, and go to state 6
+    WHILE    shift, and go to state 7
+    FOR      shift, and go to state 8
+    LET      shift, and go to state 9
+    BREAK    shift, and go to state 10
+    NIL      shift, and go to state 11
+    MINUS    shift, and go to state 12
+
+    lvalue           go to state 14
+    exp              go to state 160
+    varExp           go to state 16
+    nilExp           go to state 17
+    intExp           go to state 18
+    stringExp        go to state 19
+    callExp          go to state 20
+    binaryOpExp      go to state 21
+    unaryOpExp       go to state 22
+    recordCreateExp  go to state 23
+    seqExp           go to state 24
+    assignExp        go to state 25
+    ifExp            go to state 26
+    whileExp         go to state 27
+    forExp           go to state 28
+    breakExp         go to state 29
+    letExp           go to state 30
+    arrayCreateExp   go to state 31
+
+
+State 160
+
+   30 binaryOpExp: exp . PLUS exp
+   31            | exp . MINUS exp
+   32            | exp . TIMES exp
+   33            | exp . DIVIDE exp
+   34            | exp . EQ exp
+   35            | exp . NEQ exp
+   36            | exp . LT exp
+   37            | exp . LE exp
+   38            | exp . GT exp
+   39            | exp . GE exp
+   40            | exp . AND exp
+   41            | exp . OR exp
+   79 functydec: FUNCTION ID LPAREN fieldList RPAREN COLON TYPE_ID EQ exp .
+
+    OR      shift, and go to state 57
+    AND     shift, and go to state 58
+    EQ      shift, and go to state 59
+    NEQ     shift, and go to state 60
+    LT      shift, and go to state 61
+    LE      shift, and go to state 62
+    GT      shift, and go to state 63
+    GE      shift, and go to state 64
+    PLUS    shift, and go to state 65
+    MINUS   shift, and go to state 66
+    TIMES   shift, and go to state 67
+    DIVIDE  shift, and go to state 68
+
+    $default  reduce using rule 79 (functydec)

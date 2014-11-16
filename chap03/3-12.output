@@ -1,0 +1,259 @@
+Terminals unused in grammar
+
+   STRING
+   INT
+
+
+State 20 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: prog $end
+
+    1 prog: stmlist
+
+    2 stm: ID ASSIGN ID
+    3    | WHILE ID DO stm
+    4    | BEGIN stmlist END
+    5    | IF ID THEN stm
+    6    | IF ID THEN stm ELSE stm
+
+    7 stmlist: stm
+    8        | stmlist SEMI stm
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+ID (258) 2 3 5 6
+STRING (259)
+INT (260)
+ASSIGN (261) 2
+WHILE (262) 3
+DO (263) 3
+BEGIN (264) 4
+END (265) 4
+IF (266) 5 6
+THEN (267) 5 6
+ELSE (268) 6
+SEMI (269) 8
+
+
+Nonterminals, with rules where they appear
+
+$accept (15)
+    on left: 0
+prog (16)
+    on left: 1, on right: 0
+stm (17)
+    on left: 2 3 4 5 6, on right: 3 5 6 7 8
+stmlist (18)
+    on left: 7 8, on right: 1 4 8
+
+
+State 0
+
+    0 $accept: . prog $end
+
+    ID     shift, and go to state 1
+    WHILE  shift, and go to state 2
+    BEGIN  shift, and go to state 3
+    IF     shift, and go to state 4
+
+    prog     go to state 5
+    stm      go to state 6
+    stmlist  go to state 7
+
+
+State 1
+
+    2 stm: ID . ASSIGN ID
+
+    ASSIGN  shift, and go to state 8
+
+
+State 2
+
+    3 stm: WHILE . ID DO stm
+
+    ID  shift, and go to state 9
+
+
+State 3
+
+    4 stm: BEGIN . stmlist END
+
+    ID     shift, and go to state 1
+    WHILE  shift, and go to state 2
+    BEGIN  shift, and go to state 3
+    IF     shift, and go to state 4
+
+    stm      go to state 6
+    stmlist  go to state 10
+
+
+State 4
+
+    5 stm: IF . ID THEN stm
+    6    | IF . ID THEN stm ELSE stm
+
+    ID  shift, and go to state 11
+
+
+State 5
+
+    0 $accept: prog . $end
+
+    $end  shift, and go to state 12
+
+
+State 6
+
+    7 stmlist: stm .
+
+    $default  reduce using rule 7 (stmlist)
+
+
+State 7
+
+    1 prog: stmlist .
+    8 stmlist: stmlist . SEMI stm
+
+    SEMI  shift, and go to state 13
+
+    $default  reduce using rule 1 (prog)
+
+
+State 8
+
+    2 stm: ID ASSIGN . ID
+
+    ID  shift, and go to state 14
+
+
+State 9
+
+    3 stm: WHILE ID . DO stm
+
+    DO  shift, and go to state 15
+
+
+State 10
+
+    4 stm: BEGIN stmlist . END
+    8 stmlist: stmlist . SEMI stm
+
+    END   shift, and go to state 16
+    SEMI  shift, and go to state 13
+
+
+State 11
+
+    5 stm: IF ID . THEN stm
+    6    | IF ID . THEN stm ELSE stm
+
+    THEN  shift, and go to state 17
+
+
+State 12
+
+    0 $accept: prog $end .
+
+    $default  accept
+
+
+State 13
+
+    8 stmlist: stmlist SEMI . stm
+
+    ID     shift, and go to state 1
+    WHILE  shift, and go to state 2
+    BEGIN  shift, and go to state 3
+    IF     shift, and go to state 4
+
+    stm  go to state 18
+
+
+State 14
+
+    2 stm: ID ASSIGN ID .
+
+    $default  reduce using rule 2 (stm)
+
+
+State 15
+
+    3 stm: WHILE ID DO . stm
+
+    ID     shift, and go to state 1
+    WHILE  shift, and go to state 2
+    BEGIN  shift, and go to state 3
+    IF     shift, and go to state 4
+
+    stm  go to state 19
+
+
+State 16
+
+    4 stm: BEGIN stmlist END .
+
+    $default  reduce using rule 4 (stm)
+
+
+State 17
+
+    5 stm: IF ID THEN . stm
+    6    | IF ID THEN . stm ELSE stm
+
+    ID     shift, and go to state 1
+    WHILE  shift, and go to state 2
+    BEGIN  shift, and go to state 3
+    IF     shift, and go to state 4
+
+    stm  go to state 20
+
+
+State 18
+
+    8 stmlist: stmlist SEMI stm .
+
+    $default  reduce using rule 8 (stmlist)
+
+
+State 19
+
+    3 stm: WHILE ID DO stm .
+
+    $default  reduce using rule 3 (stm)
+
+
+State 20
+
+    5 stm: IF ID THEN stm .
+    6    | IF ID THEN stm . ELSE stm
+
+    ELSE  shift, and go to state 21
+
+    ELSE      [reduce using rule 5 (stm)]
+    $default  reduce using rule 5 (stm)
+
+
+State 21
+
+    6 stm: IF ID THEN stm ELSE . stm
+
+    ID     shift, and go to state 1
+    WHILE  shift, and go to state 2
+    BEGIN  shift, and go to state 3
+    IF     shift, and go to state 4
+
+    stm  go to state 22
+
+
+State 22
+
+    6 stm: IF ID THEN stm ELSE stm .
+
+    $default  reduce using rule 6 (stm)

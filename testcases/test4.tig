@@ -1,0 +1,26 @@
+/* define a recursive function */
+let
+/* calculate n! */
+function nfactor(n: int): int =
+         let
+             type  arrtype = array of int
+             type  arrarrtype = array of arrtype
+             var arr1:arrtype := arrtype [10] of 0
+             var arrarr1:arrarrtype := arrarrtype [8] of arr1
+         in
+             if  n > 0 & n < 1 & n < 3 then
+                     if 1 then
+                          arrarr1 !! 5 !! 3
+                          else 0
+                 else n * nfactor(n-1)
+         end
+function fun2(n: int): int =
+                 if if 1 < 0 then 2 else 0 then
+                     nfactor(10) else
+                     nfactor(20)
+in
+    1
+end
+
+
+
