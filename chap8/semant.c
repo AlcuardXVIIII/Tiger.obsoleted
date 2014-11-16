@@ -290,7 +290,7 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
         EM_error(a->pos,"can not assign to diffence type");
       }
     }
-    return Expty(Tr_assignExp(var_expty->exp,exp_expty->exp),var_expty->ty);
+    return Expty(Tr_assignExp(var_expty->exp,exp_expty->exp),Ty_Void());
   }
   case A_ifExp:{
     A_exp test_exp = a->u.iff.test;
