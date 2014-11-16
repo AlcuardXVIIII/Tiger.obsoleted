@@ -395,22 +395,13 @@ Tr_exp Tr_callExp(Temp_label label,T_exp  staticLink,T_expList t_expList){
 Tr_exp Tr_nop(){
   return Tr_Ex(T_Const(0));
 }
-Tr_exp Tr_let(T_expList t_expList){
+Tr_exp Tr_letExp(T_expList t_expList){
   T_exp t_exp = t_expList->head;
   for(t_expList = t_expList->tail;t_expList;t_expList=t_expList->tail){
     t_exp = T_Eseq(T_Exp(t_expList->head),t_exp);
   }
   return Tr_Ex(t_exp);
 
-}
-Tr_exp Tr_letExp(T_expList list){
-  T_exp t_exp = list->head;
-  T_expList h = list->tail;
-  while(h!=NULL){
-    t_exp = T_Eseq(T_Exp(list->head),t_exp);
-    h = h->tail;
-  }
-  return Tr_Ex(t_exp);
 }
 Tr_exp Tr_recordExp(int fieldNum,T_expList t_expList){
   Temp_temp r = Temp_newtemp();
@@ -461,6 +452,7 @@ Tr_exp Tr_seqExp(T_expList t_expList){
   if(t_expList==NULL){
     return Tr_nop();
   }
+
   T_exp t_exp = t_expList->head;
   t_expList = t_expList->tail;
   while(t_expList){

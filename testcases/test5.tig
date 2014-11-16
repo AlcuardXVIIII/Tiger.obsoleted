@@ -1,17 +1,18 @@
 /* define valid recursive types */
 let
-/* define a list */
-type intlist = {hd: int, tl: intlist} 
+function fun(n:int):int =
+   let
+    type intlist = {hd: int, tl: intlist} 
+    type tree ={key: int, children: treelist}
+    type treelist = {hd: tree, tl: treelist}
 
-/* define a tree */
-type tree ={key: int, children: treelist}
-type treelist = {hd: tree, tl: treelist}
-
-var lis:intlist := intlist { hd=1, tl= nil }
-var tre:tree := tree {key=1,children=nil}
-var trelist:treelist := treelist {hd=tre,tl=nil}
+    var lis:intlist := intlist { hd=1, tl= nil }
+    var tre:tree := tree {key=1,children=nil}
+    var trelist:treelist := treelist {hd=tre,tl=nil}
+   in
+          trelist;
+          33
+   end
 in
-	lis;
-        tre;
-        trelist
+    1
 end

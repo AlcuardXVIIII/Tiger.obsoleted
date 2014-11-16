@@ -26,21 +26,29 @@ void SEM_transProg(A_exp exp){
   stack = E_newStack();
   transExp(Tr_outermost(),venv,tenv,exp);
   F_fragList f_fragList = Tr_getResult();
+  bool outSwitch = 1;
   while(f_fragList!=NULL){
-  printf(  "=------------fun-beg----------=\n");
     F_frag f_frag = f_fragList->head;
     if(f_frag->kind==F_procFrag){
+      if(outSwitch==0){
+        printf(  "=------------str-end----------=\n");
+        outSwitch = 1;
+      }
+      printf(  "=------------fun-beg----------=\n");
       T_stmList t_stmList = C_linearize(f_frag->u.proc.body);
-
       struct C_block block = C_basicBlocks(t_stmList);
       t_stmList = C_traceSchedule(block);
       printStmList(stdout,t_stmList);
+      printf(  "=------------fun-end----------=\n");
     }
     else{
+      if(outSwitch==1){
+        printf(  "=------------str-beg----------=\n");
+        outSwitch = 0;
+      }
       fprintf(stdout,"%s\n",f_frag->u.stringg.str);
     }
     f_fragList = f_fragList->tail;
-    printf(  "=------------fun-end----------=\n");
   }
 }
 bool assertSameType(Ty_ty ty1,Ty_ty ty2){
@@ -264,6 +272,7 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
     A_expList explist = a->u.seq;
     Tr_expty tr_expty = Expty(NULL,Ty_Void());
     T_expList t_expList = NULL;
+
     while(explist!=NULL){
       A_exp exp = explist->head;
       tr_expty = transExp(level,venv,tenv,exp);
@@ -425,25 +434,24 @@ Tr_exp transDec(Tr_level level,S_table venv,S_table tenv, A_dec d){
       }else {
         Tr_access tr_access = Tr_allocLocal(level,TRUE);
         S_enter(venv,d->u.var.var,E_VarEntry(tr_access,tr_expty->ty));
-        return Tr_simpleVar(tr_access,level);
+        return Tr_assignExp(Tr_simpleVar(tr_access,level),tr_expty->exp);
       }
     }
     else{
       Ty_ty decType = actualTy(S_look(tenv,d->u.var.typ));
-      Ty_ty initType = transExp(level,venv,tenv,d->u.var.init)->ty;
+      Tr_expty tr_expty = transExp(level,venv,tenv,d->u.var.init);
+      Ty_ty initType = tr_expty->ty;
       if(decType == NULL){
         EM_error(d->pos,"no exist type");
       }else{
         if(initType->kind == Ty_nil && decType->kind != Ty_record){
           EM_error(d->pos,"require record-type");
-        }else if(initType->kind == Ty_nil){
-
         }else if(!assertSameType(decType,initType)){//initType->kind != decType->kind){
           EM_error(d->pos,"require same type");
         }
         Tr_access tr_access = Tr_allocLocal(level,TRUE);
         S_enter(venv,d->u.var.var,E_VarEntry(tr_access,decType));
-        return Tr_simpleVar(tr_access,level);
+        return Tr_assignExp(Tr_simpleVar(tr_access,level),tr_expty->exp);
       }
     }
     return NULL;
