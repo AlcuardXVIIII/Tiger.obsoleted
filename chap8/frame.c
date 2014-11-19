@@ -60,12 +60,20 @@ F_access F_allocLocal(F_frame f,bool escape){
 }
 
 Temp_temp F_FP(){
-  static Temp_temp temp_temp = NULL;
-  if(temp_temp==NULL){
-    temp_temp = Temp_newtemp();
+  static Temp_temp temp_FP = NULL;
+  if(temp_FP==NULL){
+    temp_FP = Temp_newtemp();
   }
-  return temp_temp;
+  return temp_FP;
 }
+Temp_temp F_RV(){
+  static Temp_temp temp_RV = NULL;
+  if(temp_RV==NULL){
+    temp_RV = Temp_newtemp();
+  }
+  return temp_RV;
+}
+
 const int F_wordSize = 4;
 
 T_exp F_Exp(F_access f_access,T_exp framePtr){

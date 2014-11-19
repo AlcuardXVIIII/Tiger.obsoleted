@@ -501,7 +501,8 @@ Tr_exp Tr_eqRefExp(A_oper oper,Tr_exp left,Tr_exp right){
 }
 
 void Tr_procEntryExit(Tr_level level,Tr_exp body){
-  F_frag f_frag = F_ProcFrag(unNx(body),level->frame);
+  T_stm t_stm = T_Move(T_Temp(F_RV()),unEx(body));
+  F_frag f_frag = F_ProcFrag(t_stm,level->frame);
   procList = F_FragList(f_frag,procList);
 }
 F_fragList Tr_getResult(){
