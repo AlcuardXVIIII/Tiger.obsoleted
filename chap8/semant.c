@@ -484,11 +484,11 @@ Tr_exp transDec(Tr_level level,S_table venv,S_table tenv, A_dec d){
           u_boolList_t->tail = u_boolList;
           u_boolList_t = u_boolList_t->tail;
         }else{
-          u_boolList_t = u_boolList_h = u_boolList;
+          u_boolList_h = u_boolList_t = u_boolList;
         }
         a_fieldList = a_fieldList->tail;
       }
-      Tr_level tr_level = Tr_newLevel(level,temp_label,u_boolList_t);
+      Tr_level tr_level = Tr_newLevel(level,temp_label,u_boolList_h);
       S_enter(venv,fundec->name,E_FunEntry(tr_level,temp_label,ty_tyList,result_ty));
       fundecList = fundecList->tail;
     }
@@ -500,7 +500,7 @@ Tr_exp transDec(Tr_level level,S_table venv,S_table tenv, A_dec d){
       Ty_tyList ty_tyList = e_enventry->u.fun.formals;
       Tr_accessList tr_accessList = e_enventry->u.fun.level->formals->tail;
       A_fieldList a_fieldList = fundec->params;
-      while(ty_tyList!=NULL&&a_fieldList!=NULL){
+      while(ty_tyList!=NULL&&a_fieldList!=NULL&&tr_accessList!=NULL){
         S_enter(venv,a_fieldList->head->name,E_VarEntry(tr_accessList->head,ty_tyList->head));
         ty_tyList = ty_tyList->tail;
         a_fieldList = a_fieldList->tail;
