@@ -305,7 +305,6 @@ T_stmList C_traceSchedule(struct C_block b)
   for (sList=global_block.stmLists; sList; sList=sList->tail) {
     S_enter(block_env, sList->head->head->u.LABEL, sList->head);
   }
-
   return getNext();
 }
 
