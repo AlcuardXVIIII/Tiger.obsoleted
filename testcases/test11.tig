@@ -1,3 +1,12 @@
-/* error hi expr is not int, and index variable erroneously assigned to.  */
-for i:=10 to 12 do 
-    (i := i - 1;())
+let 
+ function test(d:int):int =
+  let var sum:int := 0
+  in
+     for i:=1 to d+1 do 
+        (if i = d then break;
+        sum := sum + i);
+     sum
+  end
+in
+ 3
+end
