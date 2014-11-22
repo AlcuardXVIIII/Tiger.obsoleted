@@ -1,2 +1,13 @@
 /* error : body of while not unit */
-while(10 > 5) do 5+6
+let
+function fun1(d:int):int =
+    let var sum:int := 0
+    in
+        while(d > 0) do
+            sum := sum + d;
+            d:= d - 1;
+        sum
+    end
+in
+    3
+end

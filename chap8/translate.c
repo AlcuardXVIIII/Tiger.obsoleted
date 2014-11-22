@@ -373,11 +373,10 @@ Tr_exp Tr_whileExp(Tr_exp test,Tr_exp body,patchList patList){
 
   T_stm t_stm = T_Seq(T_Label(test_label),
                       T_Seq(cx.stm,
-                            T_Seq(T_Jump(T_Name(done_label),Temp_LabelList(done_label,NULL)),
-                                   T_Seq(T_Label(ok_label),
-                                        T_Seq(unNx(body),
-                                              T_Seq(T_Jump(T_Name(test_label),Temp_LabelList(test_label,NULL)),
-                                                    T_Label(done_label)))))));
+                            T_Seq(T_Label(ok_label),
+                                  T_Seq(unNx(body),
+                                        T_Seq(T_Jump(T_Name(test_label),Temp_LabelList(test_label,NULL)),
+                                              T_Label(done_label))))));
 
   return Tr_Nx(t_stm);
 }
