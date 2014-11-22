@@ -1,1 +1,0 @@
-jack@john-Ideapad-Z460.8898:1415077693
