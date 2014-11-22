@@ -388,10 +388,12 @@ Tr_exp Tr_breakExp(patchList* patList){
       return Tr_Nx(stm);
 }
 
-Tr_exp Tr_callExp(Temp_label label,T_exp  staticLink,T_expList t_expList){
+Tr_exp Tr_callExpWithValue(Temp_label label,T_exp  staticLink,T_expList t_expList){
+  return Tr_Ex(T_Eseq(T_Exp(T_Call(T_Name(label),T_ExpList(staticLink,t_expList))),T_Temp(F_RV())));
+}
+Tr_exp Tr_callExpWithoutValue(Temp_label label,T_exp  staticLink,T_expList t_expList){
   return Tr_Ex(T_Call(T_Name(label),T_ExpList(staticLink,t_expList)));
 }
-
 Tr_exp Tr_nop(){
   return Tr_Ex(T_Const(0));
 }
@@ -500,9 +502,13 @@ Tr_exp Tr_eqRefExp(A_oper oper,Tr_exp left,Tr_exp right){
   return Tr_Cx(trues, falses, t_stm);
 }
 
-void Tr_procEntryExit(Tr_level level,Tr_exp body){
+void Tr_ExitWithValue(Tr_level level,Tr_exp body){
   T_stm t_stm = T_Move(T_Temp(F_RV()),unEx(body));
   F_frag f_frag = F_ProcFrag(t_stm,level->frame);
+  procList = F_FragList(f_frag,procList);
+}
+void Tr_ExitWithoutValue(Tr_level level,Tr_exp body){
+  F_frag f_frag = F_ProcFrag(unNx(body),level->frame);
   procList = F_FragList(f_frag,procList);
 }
 F_fragList Tr_getResult(){

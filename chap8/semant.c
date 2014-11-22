@@ -210,7 +210,11 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
     }
     Tr_level funLevel = entry->u.fun.level;
     T_exp t_exp = staticLink(level,funLevel);
-    return Expty(Tr_callExp(entry->u.fun.label,t_exp,t_expList_h),actual_ty);
+    if(assertSameType(actual_ty,Ty_Void())){
+      return Expty(Tr_callExpWithoutValue(entry->u.fun.label,t_exp,t_expList_h),actual_ty);
+    }else{
+     return Expty(Tr_callExpWithValue(entry->u.fun.label,t_exp,t_expList_h),actual_ty);
+     }
   }
   case A_letExp:{
     Tr_expty exp = NULL;
@@ -507,7 +511,11 @@ Tr_exp transDec(Tr_level level,S_table venv,S_table tenv, A_dec d){
         tr_accessList = tr_accessList->tail;
       }
       Tr_expty tr_expty = transExp(e_enventry->u.fun.level,venv,tenv,fundec->body);
-      Tr_procEntryExit(e_enventry->u.fun.level,tr_expty->exp);
+      if(fundec->result==NULL){
+        Tr_ExitWithoutValue(e_enventry->u.fun.level,tr_expty->exp);
+      }else{
+        Tr_ExitWithValue(e_enventry->u.fun.level,tr_expty->exp);
+      }
       S_endScope(venv);
       if(e_enventry->u.fun.result==Ty_Void()&&!assertSameType(Ty_Void(),tr_expty->ty)){
         EM_error(d->pos,"the body of function must return none");
