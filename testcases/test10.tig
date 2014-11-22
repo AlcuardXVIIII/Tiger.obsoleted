@@ -3,10 +3,11 @@ let
 function fun1(d:int):int =
     let var sum:int := 0
     in
-        while(d > 0) do
-            sum := sum + d;
-            d:= d - 1;
-        sum
+        while(1) do
+        (if d = 0 then break;
+         sum:=sum+d;
+         d:=d-1);
+         sum
     end
 in
     3

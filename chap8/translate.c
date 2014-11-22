@@ -368,22 +368,21 @@ Tr_exp Tr_whileExp(Tr_exp test,Tr_exp body,patchList patList){
   Temp_label done_label = Temp_newlabel();
   doPatch(patList,done_label);
   struct Cx cx = unCx(test);
-  doPatch(cx.trues,done_label);
-  doPatch(cx.falses,ok_label);
-
+  doPatch(cx.trues,ok_label);
+  doPatch(cx.falses,done_label);
   T_stm t_stm = T_Seq(T_Label(test_label),
                       T_Seq(cx.stm,
                             T_Seq(T_Label(ok_label),
                                   T_Seq(unNx(body),
                                         T_Seq(T_Jump(T_Name(test_label),Temp_LabelList(test_label,NULL)),
                                               T_Label(done_label))))));
-
   return Tr_Nx(t_stm);
 }
 Tr_exp Tr_breakExp(patchList* patList){
       T_exp t_label = T_Name(NULL);
-      (*patList) = PatchList(&(t_label->u.NAME),*patList);
       T_stm stm = T_Jump(t_label,Temp_LabelList(t_label->u.NAME,NULL));
+      *patList = PatchList(&(t_label->u.NAME),*patList);
+      *patList = PatchList(&(stm->u.JUMP.jumps->head),*patList);
       return Tr_Nx(stm);
 }
 

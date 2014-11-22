@@ -18,7 +18,7 @@ struct E_stack_{
   E_stack next;
 };
 
-void E_push(E_stack stack,void *object);
-void E_pop(E_stack stack);
+void E_push(E_stack* stack,void *object);
+void E_pop(E_stack* stack);
 void* E_top(E_stack stack);
 E_stack E_newStack();

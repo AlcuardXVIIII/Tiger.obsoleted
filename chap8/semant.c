@@ -333,12 +333,11 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
   }
   case A_whileExp:{
     patchList patList = NULL;
-    E_push(stack,&patList);
-
+    E_push(&stack,&patList);
     A_exp test = a->u.whilee.test;
     Tr_expty test_expty = transExp(level,venv,tenv,test);
     Tr_expty body_expty = transExp(level,venv,tenv,a->u.whilee.body);
-    E_pop(stack);
+    E_pop(&stack);
     if(test_expty->ty->kind!=Ty_int){
       EM_error(a->pos,"test-expr must be boolean value");
       return Expty(NULL,Ty_Void());
@@ -358,7 +357,7 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
   }
   case A_forExp:{
     patchList patList = NULL;
-    E_push(stack,&patList);
+    E_push(&stack,&patList);
     A_exp lo = a->u.forr.lo;
     A_exp hi = a->u.forr.hi;
     A_exp body = a->u.forr.body;
@@ -370,7 +369,7 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
     E_enventry e_enventry = S_look(venv,a->u.forr.var);
     Tr_expty body_expty = transExp(level,venv,tenv,body);
     S_endScope(venv);
-    E_pop(stack);
+    E_pop(&stack);
 
     if(lo_expty->ty==NULL||hi_expty->ty==NULL||lo_expty->ty->kind!=Ty_int||hi_expty->ty->kind!=Ty_int){
       EM_error(a->pos,"must in the range of integer");
@@ -390,10 +389,6 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
   }
   case A_breakExp:{
     patchList* patList = E_top(stack);
-    if(patList==NULL){
-      EM_error(a->pos,"there's not a while-exp or for-exp around the break");
-      assert(0);
-    }
     return Expty(Tr_breakExp(patList),Ty_Void());
   }
   case A_arrayExp:{

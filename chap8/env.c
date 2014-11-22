@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include "util.h"
 #include "table.h"
 #include "symbol.h"
@@ -37,19 +38,26 @@ S_table E_base_tenv(void){
 S_table E_base_venv(void){
   return TAB_empty();
 }
-void E_push(E_stack stack,void *object){
+void E_push(E_stack* stack,void *object){
   E_stack node = checked_malloc(sizeof(*node));
   node->object = object;
-  node->next = stack;
+  node->next = *stack;
+  *stack = node;
 }
-void E_pop(E_stack stack){
-  if(stack!=NULL){
-    stack = stack->next;
+void E_pop(E_stack* stack){
+  if(stack==NULL){
+    fprintf(stdout,"stack already empty\n");
+    assert(0);
+  }
+  if(*stack!=NULL){
+    *stack =(*stack)->next;
   }
 }
 void* E_top(E_stack stack){
-  if(stack==NULL)
-    return NULL;
+  if(stack==NULL){
+    fprintf(stdout,"stack already empty\n");
+    assert(0);
+  }
   return stack->object;
 }
 E_stack E_newStack(){
