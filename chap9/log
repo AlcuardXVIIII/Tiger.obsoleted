@@ -1,0 +1,15 @@
+T_Mem:
+1.T_TEMP done.
+2.T_BINOP done.
+     3.unEx(simpVar)  351 doing Tr_forExp->Tr_simpleVar(tr_access.level)->F_Exp(..,..)
+     3.T_MEM(T_BINOP(T_PLUS,e,T_CONST)
+  or T_TEMP(e)
+      4.T_Binop(T_plus,unEx(var),T_Binop(T_mul,unEx(index),T_Const(F_wordSize))))
+     var_expty->exp (transVar(level,venv,tenv,v->u.subscript.var);)
+     Tr_simpleVar(      return Expty(Tr_simpleVar(e_enventry->u.var.access,level),actualTy(e_enventry->u.var.ty));)
+     F_Exp(...,...)->T_MEM(T_BINOP(T_PLUS,e,T_CONST)
+
+
+--->T_Binop(T_plus,T_MEM(T_BINOP(T_PLUS,e,T_CONST)),T_Binop(T_mul,)))
+--->T_TEMP(e)
+--->T_MEM(T_BINOP(T_PLUS,e,T_CONST)

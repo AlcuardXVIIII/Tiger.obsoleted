@@ -6,6 +6,98 @@
 #include "tree.h"
 #include "frame.h"
 
+Temp_temp F_EAX(){
+  static Temp_temp eax;
+  if(eax==NULL){
+    eax = Temp_newtemp();
+  }
+  return eax;
+}
+Temp_temp F_EBX(){
+  static Temp_temp ebx;
+  if(ebx==NULL){
+    ebx = Temp_newtemp();
+  }
+  return ebx;
+}
+Temp_temp F_ECX(){
+  static Temp_temp ecx;
+  if(ecx==NULL){
+    ecx = Temp_newtemp();
+  }
+  return ecx;
+}
+Temp_temp F_EDX(){
+  static Temp_temp edx;
+  if(edx==NULL){
+    edx = Temp_newtemp();
+  }
+  return edx;
+}
+Temp_temp F_EDI(){
+  static Temp_temp edi;
+  if(edi==NULL){
+    edi = Temp_newtemp();
+  }
+  return edi;
+}
+Temp_temp F_ESI(){
+  static Temp_temp esi;
+  if(esi==NULL){
+    esi = Temp_newtemp();
+  }
+  return esi;
+}
+Temp_temp F_EBP(){
+  static Temp_temp ebp;
+  if(ebp==NULL){
+    ebp = Temp_newtemp();
+  }
+  return ebp;
+}
+Temp_temp F_ESP(){
+  static Temp_temp esp;
+  if(esp==NULL){
+    esp = Temp_newtemp();
+  }
+  return esp;
+}
+
+Temp_map F_temp2Name(){
+  static Temp_map temp2map = NULL;
+  if(temp2map==NULL){
+    Temp_enter(temp2map,F_EAX(),"%eax");
+    Temp_enter(temp2map,F_EBX(),"%ebx");
+    Temp_enter(temp2map,F_ECX(),"%ecx");
+    Temp_enter(temp2map,F_EDX(),"%edx");
+    Temp_enter(temp2map,F_ESI(),"%esi");
+    Temp_enter(temp2map,F_EDI(),"%edi");
+    Temp_enter(temp2map,F_ESP(),"%esp");
+    Temp_enter(temp2map,F_EBP(),"%ebp");
+  }
+  return temp2map;
+}
+
+Temp_temp F_FP(){
+  return F_EBP();
+}
+Temp_temp F_RV(){
+  static Temp_temp temp_RV = NULL;
+  if(temp_RV==NULL){
+    temp_RV = Temp_newtemp();
+  }
+  return temp_RV;
+}
+Temp_tempList F_callee_saves(){
+  static Temp_tempList temp_tempList = NULL;
+  if(temp_tempList==NULL){
+    temp_tempList = Temp_TempList(F_EAX(),Temp_TempList(F_EBX(),Temp_TempList(F_ECX(),Temp_TempList(F_EDI(),Temp_TempList(F_ESI(),NULL)))));
+  }
+  return temp_tempList;
+}
+Temp_tempList F_caller_saves(){
+  return Temp_TempList(F_RV(),NULL);
+}
 F_accessList F_AccessList(F_access head,F_accessList tail){
   F_accessList f_accessList = checked_malloc(sizeof(*f_accessList));
   f_accessList->head = head;
@@ -59,20 +151,6 @@ F_access F_allocLocal(F_frame f,bool escape){
   return f_access;
 }
 
-Temp_temp F_FP(){
-  static Temp_temp temp_FP = NULL;
-  if(temp_FP==NULL){
-    temp_FP = Temp_newtemp();
-  }
-  return temp_FP;
-}
-Temp_temp F_RV(){
-  static Temp_temp temp_RV = NULL;
-  if(temp_RV==NULL){
-    temp_RV = Temp_newtemp();
-  }
-  return temp_RV;
-}
 
 const int F_wordSize = 4;
 

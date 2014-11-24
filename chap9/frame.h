@@ -11,6 +11,7 @@ struct F_access_{
     Temp_temp reg;
   }u;
 };
+
 struct F_accessList_{F_access head;F_accessList tail;};
 
 struct F_frame_{
@@ -18,7 +19,6 @@ struct F_frame_{
   F_accessList formals;
   int max_offset;
 };
-
 
 F_accessList F_AccessList(F_access head,F_accessList tail);
 F_access InFrame(int offset);
@@ -51,3 +51,6 @@ struct F_fragList_{
 F_frag F_StringFrag(Temp_label label,string str);
 F_frag F_ProcFrag(T_stm body,F_frame frame);
 F_fragList F_FragList(F_frag head,F_fragList tail);
+Temp_map F_temp2Name();
+Temp_tempList F_callee_saves();
+Temp_tempList F_caller_saves();
