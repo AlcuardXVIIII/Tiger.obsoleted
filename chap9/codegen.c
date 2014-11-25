@@ -61,7 +61,14 @@ static Temp_temp munchExp(T_exp e){
         string instr = string_format("movl %d(`s0),`d0\n",e->u.MEM->u.BINOP.left->u.CONST);
         emit(AS_Move(instr,L(r,NULL),L(munchExp(e1),NULL)));
       }else{
-        assert(0);
+        T_exp e1 = e->u.MEM->u.BINOP.left;
+        T_exp e2 = e->u.MEM->u.BINOP.right;
+        string instr = string_format("addl `s0,`d0\n");
+        Temp_temp temp_temp = munchExp(e1);
+        emit(AS_Oper(instr,L(temp_temp,NULL),L(munchExp(e2),NULL),NULL));
+
+        instr = string_format("movl `s0,`d0");
+        emit(AS_Move(instr,L(r,NULL),L(temp_temp,NULL)));
       }
     }else if(e->u.MEM->kind==T_CONST){
       //T_MEM(T_CONST d),but this situation this will not appear
@@ -75,8 +82,8 @@ static Temp_temp munchExp(T_exp e){
       //
       string instr = string_format("movl `s0,`d0\n");
       emit(AS_Move(instr,L(r,NULL),L(munchExp(e->u.MEM),NULL)));
-      break;
     }
+    break;
   }
   case T_CONST:{
     string instr = string_format("movl $%d,`d0\n",e->u.CONST);
@@ -85,7 +92,7 @@ static Temp_temp munchExp(T_exp e){
   }
   case T_CALL:{
     r = munchExp(e->u.CALL.fun);
-    string instr = string_format("call `s0");
+    string instr = string_format("call `s0\n");
     emit(AS_Oper(instr,F_caller_saves(),L(r,munchArgs(0,e->u.CALL.args)),NULL));
     break;
   }
@@ -112,19 +119,21 @@ static Temp_temp munchExp(T_exp e){
       assert(0&&"unsupported operator now");
     }
     if(e->u.BINOP.right->kind==T_CONST){
-      string instr = string_format("%s `d0,`s0%s%d\n",op,sign,e->u.BINOP.right->u.CONST);
+      string instr = string_format("%s `s0%s%d,`d0\n",op,sign,e->u.BINOP.right->u.CONST);
       emit(AS_Oper(instr,L(r,NULL),L(munchExp(e->u.BINOP.left),NULL),NULL));
     }else if(e->u.BINOP.left->kind==T_CONST){
-      string instr = string_format("%s `d0,`s0%s%d\n",op,sign,e->u.BINOP.left->u.CONST);
+      string instr = string_format("%s `s0%s%d,`d0\n",op,sign,e->u.BINOP.left->u.CONST);
       emit(AS_Oper(instr,L(r,NULL),L(munchExp(e->u.BINOP.right),NULL),NULL));
     }else{
-      string instr = string_format("%s `d0,`s0\n",op);
+      string instr = string_format("%s `s0,`d0\n",op);
       emit(AS_Oper(instr,L(r,NULL),L(munchExp(e->u.BINOP.left),L(munchExp(e->u.BINOP.right),NULL)),NULL));
     }
     break;
   }
+  default:
+    assert(0);
   }
-  assert(0);
+  return r;
 }
 
 static void munchStm(T_stm s){
@@ -189,7 +198,9 @@ static void munchStm(T_stm s){
       assert(0);
       break;
     }
-    emit(AS_Oper(jump_instr,NULL,NULL,AS_Targets(Temp_LabelList(s->u.CJUMP.true,NULL))));
+    instr = string_format("%s `j0\n",jump_instr);
+    emit(AS_Oper(instr,NULL,NULL,AS_Targets(Temp_LabelList(s->u.CJUMP.true,NULL))));
+    break;
   }
   case T_JUMP:{
     Temp_temp r = munchExp(s->u.JUMP.exp);

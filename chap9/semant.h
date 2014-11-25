@@ -2,7 +2,6 @@ typedef struct Tr_expty_ *Tr_expty;
 
 struct Tr_expty_{Tr_exp exp;Ty_ty ty;};
 
-void SEM_transProg(A_exp exp);
 Tr_expty transVar(Tr_level level,S_table venv,S_table tenv,A_var v);
 Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a);
 Tr_exp transDec(Tr_level level,S_table venv,S_table tenv, A_dec d);

@@ -1,8 +1,8 @@
 /* define a recursive function */
 let
 /* calculate n! */
-/*function nfactor(n: int): int =
-         let
+function nfactor(n: int): int =
+let
              var name1:string := "assembly"
              type  arrtype = array of int
              type  arrarrtype = array of arrtype
@@ -26,7 +26,7 @@ function fun2(n: int): int =
              end        
 function fun3(n:int) =
          if n <> 3 then
-            if n < 4 & n > 2 then  n:=3*/
+            if n < 4 & n > 2 then  n:=3
 function fun4(n :int ):int=
 let
 var var1:int := 3

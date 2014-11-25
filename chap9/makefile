@@ -1,5 +1,9 @@
-a.out: parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o
-	cc -g parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o
+a.out: parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o assem.o codegen.o
+	cc -g parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o assem.o codegen.o
+codegen.o:codegen.c codegen.h
+	cc -g -c codegen.c
+assem.o: assem.h assem.c
+	cc -g -c assem.c
 printtree: printtree.h printtree.c
 	cc -g -c printtree.c
 canon.o: canon.c canon.h
@@ -50,4 +54,4 @@ util.o: util.c util.h
 	cc -g -c util.c
 
 clean: 
-	rm -f a.out util.o parsetest.o lex.yy.o errormsg.o y.tab.c y.tab.h y.tab.o lex.yy.c y.output table.o absyn.o symbol.o errormsg.o  prabsyn.o env.o types.o semant.o frame.o bst.o translate.o temp.o escape.o tree.o canon.o printtree.o
+	rm -f a.out util.o parsetest.o lex.yy.o errormsg.o y.tab.c y.tab.h y.tab.o lex.yy.c y.output table.o absyn.o symbol.o errormsg.o  prabsyn.o env.o types.o semant.o frame.o bst.o translate.o temp.o escape.o tree.o canon.o printtree.o codegen.o assem.o

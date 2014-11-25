@@ -66,6 +66,7 @@ Temp_temp F_ESP(){
 Temp_map F_temp2Name(){
   static Temp_map temp2map = NULL;
   if(temp2map==NULL){
+    temp2map = Temp_layerMap(Temp_empty(),Temp_name());
     Temp_enter(temp2map,F_EAX(),"%eax");
     Temp_enter(temp2map,F_EBX(),"%ebx");
     Temp_enter(temp2map,F_ECX(),"%ecx");

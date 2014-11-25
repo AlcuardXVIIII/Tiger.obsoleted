@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h> /* for atoi */
+#include <assert.h>
 #include <string.h> /* for strcpy */
 #include "util.h"
 #include "symbol.h"
@@ -82,37 +83,44 @@ static Temp_label nthLabel(Temp_labelList list, int i) {
  */
 static void format(char *result, string assem, 
 		   Temp_tempList dst, Temp_tempList src,
-		   AS_targets jumps, Temp_map m)
-{
+		   AS_targets jumps, Temp_map m){
   char *p;
   int i = 0; /* offset to result string */
   for(p = assem; p && *p != '\0'; p++)
-    if (*p == '`')
+    if (*p == '`'){
       switch(*(++p)) {
-      case 's': {int n = atoi(++p);
-		 string s = Temp_look(m, nthTemp(src,n));
-		 strcpy(result+i, s);
-		 i += strlen(s);
-	       }
+      case 's': {
+        int n = atoi(++p);
+        string s = Temp_look(m, nthTemp(src,n));
+        strcpy(result+i, s);
+        i += strlen(s);
 	break;
-      case 'd': {int n = atoi(++p);
-		 string s = Temp_look(m, nthTemp(dst,n));
-		 strcpy(result+i, s);
-		 i += strlen(s);
-	       }
+      }
+      case 'd': {
+        int n = atoi(++p);
+        string s = Temp_look(m, nthTemp(dst,n));
+        strcpy(result+i, s);
+        i += strlen(s);
 	break;
-      case 'j': assert(jumps); 
-	       {int n = atoi(++p);
-		 string s = Temp_labelstring(nthLabel(jumps->labels,n));
-		 strcpy(result+i, s);
-		 i += strlen(s);
-	       }
+      }
+      case 'j':{
+        assert(jumps); 
+        int n = atoi(++p);
+        string s = Temp_labelstring(nthLabel(jumps->labels,n));
+        strcpy(result+i, s);
+        i += strlen(s);
 	break;
-      case '`': result[i] = '`'; i++; 
+      }
+      case '`':{
+        result[i] = '`'; i++; 
 	break;
+      }
       default: assert(0);
       }
-    else {result[i] = *p; i++; }
+    }
+    else{
+      result[i] = *p; i++;
+    }
   result[i] = '\0';
 }
 
@@ -122,7 +130,7 @@ void AS_print(FILE *out, AS_instr i, Temp_map m)
   char r[200]; /* result */
   switch (i->kind) {
   case I_OPER:
-    format(r, i->u.OPER.assem, i->u.OPER.dst, i->u.OPER.src, i->u.OPER.jumps, m);
+     format(r, i->u.OPER.assem, i->u.OPER.dst, i->u.OPER.src, i->u.OPER.jumps, m);
     fprintf(out, "%s", r);
     break;
   case I_LABEL:

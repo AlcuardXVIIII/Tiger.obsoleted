@@ -6,14 +6,6 @@
 #include "table.h"
 #include "symbol.h"
 #include "absyn.h"
-#include "types.h"
-#include "temp.h"
-#include "tree.h"
-#include "frame.h"
-#include "translate.h"
-#include "env.h"
-#include "bst.h"
-#include "semant.h"
 
 
 int yylex(void); /* function prototype */
@@ -22,6 +14,9 @@ void yyerror(char *s)
 {
  EM_error(EM_tokPos, "%s", s);
 }
+
+A_exp absyn_root;
+
 %}
 
 
@@ -87,11 +82,8 @@ void yyerror(char *s)
            
 program: exp
 {
-        A_exp exp = $1;
-        Esc_findEscape(exp);
-        pr_exp(stdout,exp,4);
-        SEM_transProg(exp);
-        $$ = exp;
+        absyn_root = $1;
+        $$ = $1;
 }
            
 

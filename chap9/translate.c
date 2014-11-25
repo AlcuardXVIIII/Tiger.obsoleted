@@ -509,12 +509,27 @@ void Tr_ExitWithoutValue(Tr_level level,Tr_exp body){
   F_frag f_frag = F_ProcFrag(unNx(body),level->frame);
   procList = F_FragList(f_frag,procList);
 }
-F_fragList Tr_getResult(){
-  F_fragList f_fragList=stringList,p=NULL;
-  while(f_fragList!=NULL){
-    p = f_fragList;
-    f_fragList = f_fragList->tail;
+static F_fragList reverseList(F_fragList f_fragList){
+  if(f_fragList==NULL||f_fragList->tail==NULL){
+    return f_fragList;
   }
+  F_fragList result = NULL,
+    curPos=f_fragList,
+    nextPos=f_fragList->tail;
+  f_fragList->tail = NULL;
+  while(nextPos!=NULL){
+    result = nextPos;
+    nextPos = nextPos->tail;
+    result->tail = curPos;
+    curPos = result;
+  }
+  return result;
+}
+
+F_fragList Tr_getResult(){
+  F_fragList p = stringList;
+  stringList = reverseList(stringList);
+  procList = reverseList(procList);
   if(p!=NULL){
     p->tail = procList;
   }

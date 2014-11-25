@@ -17,40 +17,7 @@
 #include "printtree.h"
 
 static E_stack stack;
-void SEM_transProg(A_exp exp){
-  printf("\n===============================\n");
-  printf(  "======   SEM_transProg    =====\n");
-  printf(  "===============================\n");
-  S_table venv = E_base_venv();
-  S_table tenv = E_base_tenv();
-  stack = E_newStack();
-  transExp(Tr_outermost(),venv,tenv,exp);
-  F_fragList f_fragList = Tr_getResult();
-  bool outSwitch = 1;
-  while(f_fragList!=NULL){
-    F_frag f_frag = f_fragList->head;
-    if(f_frag->kind==F_procFrag){
-      if(outSwitch==0){
-        printf(  "=------------str-end----------=\n");
-        outSwitch = 1;
-      }
-      printf(  "=------------fun-beg----------=\n");
-      T_stmList t_stmList = C_linearize(f_frag->u.proc.body);
-      struct C_block block = C_basicBlocks(t_stmList);
-      t_stmList = C_traceSchedule(block);
-      printStmList(stdout,t_stmList);
-      printf(  "=------------fun-end----------=\n");
-    }
-    else{
-      if(outSwitch==1){
-        printf(  "=------------str-beg----------=\n");
-        outSwitch = 0;
-      }
-      fprintf(stdout,"%s\n",f_frag->u.stringg.str);
-    }
-    f_fragList = f_fragList->tail;
-  }
-}
+
 bool assertSameType(Ty_ty ty1,Ty_ty ty2){
   if(ty1==NULL||ty2==NULL)
     return 0;

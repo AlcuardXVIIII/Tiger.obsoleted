@@ -11,6 +11,9 @@ Esc_binding Esc_newBinding(int depth,bool* escape){
   esc_binding->escape = escape;
   return esc_binding;
 }
+static void traverseExp(S_table env,int depth,A_exp a);
+static void traverseDec(S_table env,int depth,A_dec d);
+static void traverseVar(S_table env,int depth,A_var v);
 
 static void traverseExp(S_table env,int depth,A_exp a){
   switch(a->kind){
