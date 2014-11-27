@@ -405,8 +405,7 @@ Tr_exp Tr_letExp(T_expList t_expList){
 }
 Tr_exp Tr_recordExp(int fieldNum,T_expList t_expList){
   Temp_temp r = Temp_newtemp();
-  T_stm alloc = T_Move(T_Temp(r),
-                       F_externalCall(String("initRecord"),T_ExpList(T_Const(fieldNum*F_wordSize),NULL)));
+  T_stm alloc = T_Seq(T_Exp(F_externalCall(String("initRecord"),T_ExpList(T_Const(fieldNum*F_wordSize),NULL))),T_Move(T_Temp(r),T_Temp(F_RV())));
   T_exp t_exp = t_expList->head;
   t_expList = t_expList->tail;
   T_stm t_stm = T_Move(T_Mem(T_Binop(T_plus,T_Temp(r),T_Const(--fieldNum*F_wordSize))),t_exp);
@@ -417,8 +416,9 @@ Tr_exp Tr_recordExp(int fieldNum,T_expList t_expList){
   return Tr_Ex(T_Eseq(T_Seq(alloc,t_stm),T_Temp(r)));
 }
 Tr_exp Tr_arrayExp(Tr_exp size,Tr_exp init){
-  return Tr_Ex(F_externalCall(String("initArray"),
-                              T_ExpList(unEx(size),T_ExpList(unEx(init),NULL))));
+  Temp_temp r = Temp_newtemp();
+  T_stm alloc = T_Seq(T_Exp(F_externalCall(String("initArray"),T_ExpList(unEx(size),T_ExpList(unEx(init),NULL)))),T_Move(T_Temp(r),T_Temp(F_RV())));
+  return Tr_Ex(T_Eseq(alloc,T_Temp(r)));
 }
 Tr_exp Tr_intExp(int n){
   return Tr_Ex(T_Const(n));
@@ -501,12 +501,13 @@ Tr_exp Tr_eqRefExp(A_oper oper,Tr_exp left,Tr_exp right){
 }
 
 void Tr_ExitWithValue(Tr_level level,Tr_exp body){
-  T_stm t_stm = T_Move(T_Temp(F_RV()),unEx(body));
+  T_stm t_stm = T_Seq(T_Label(level->name),T_Move(T_Temp(F_RV()),unEx(body)));
   F_frag f_frag = F_ProcFrag(t_stm,level->frame);
   procList = F_FragList(f_frag,procList);
 }
 void Tr_ExitWithoutValue(Tr_level level,Tr_exp body){
-  F_frag f_frag = F_ProcFrag(unNx(body),level->frame);
+  T_stm t_stm = T_Seq(T_Label(level->name),unNx(body));
+  F_frag f_frag = F_ProcFrag(t_stm,level->frame);
   procList = F_FragList(f_frag,procList);
 }
 static F_fragList reverseList(F_fragList f_fragList){

@@ -75,6 +75,11 @@ Temp_map F_temp2Name(){
     Temp_enter(temp2map,F_EDI(),"%edi");
     Temp_enter(temp2map,F_ESP(),"%esp");
     Temp_enter(temp2map,F_EBP(),"%ebp");
+
+
+
+
+    Temp_enter(temp2map,F_RV(),"%rv");
   }
   return temp2map;
 }
