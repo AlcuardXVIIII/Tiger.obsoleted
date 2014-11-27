@@ -4,6 +4,7 @@ let
 function nfactor(n: int): int =
 let
              var name1:string := "assembly"
+             var temp:int := n
              type  arrtype = array of int
              type  arrarrtype = array of arrtype
              var arr1:arrtype := arrtype [10] of 0
@@ -12,11 +13,11 @@ let
          in
              if  n > 0 & n < 1 & n < 3 then
                      if 1 then
-                          arrarr1 !! 5 !! 3
+                          (arrarr1 !! 5 !! 3;fun4(100))
                           else 0
                  else n * nfactor(n-1)
          end
-function fun2(n: int): int =
+/*function fun2(n: int): int =
          let
              var  name3:string := "yeah"
              in
@@ -26,7 +27,7 @@ function fun2(n: int): int =
              end        
 function fun3(n:int) =
          if n <> 3 then
-            if n < 4 & n > 2 then  n:=3
+            if n < 4 & n > 2 then  n:=3*/
 function fun4(n :int ):int=
 let
 var var1:int := 3

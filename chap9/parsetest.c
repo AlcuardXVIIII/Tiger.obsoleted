@@ -46,12 +46,12 @@ void SEM_transProg(A_exp exp){
       T_stmList t_stmList = C_linearize(f_frag->u.proc.body);
       struct C_block block = C_basicBlocks(t_stmList);
       t_stmList = C_traceSchedule(block);
-      printStmList(stdout,t_stmList);
+      //      printStmList(stdout,t_stmList);
       AS_instrList as_instrList = F_codegen(f_frag->u.proc.frame,t_stmList);
       AS_printInstrList(stdout,as_instrList,F_temp2Name());
     }
     else{
-      fprintf(stdout,"%s:\n\t.ascii %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);
+      fprintf(stdout,"%s:\n    .ascii %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);
     }
     f_fragList = f_fragList->tail;
   }
