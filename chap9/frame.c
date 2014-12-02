@@ -126,11 +126,11 @@ F_frame F_newFrame(Temp_label name,U_boolList formals){
   F_frame f_frame = checked_malloc(sizeof(*f_frame));
   f_frame->name = name;
   F_accessList f_accessList_h=NULL,f_accessList_t = NULL;
-  int offset = 0;
+  int offset = 1;
   while(formals!=NULL){
     F_access f_access = NULL;
     if(formals->head){
-      f_access = InFrame(offset--);
+      f_access = InFrame(offset++);
     }else{
       f_access = InReg(Temp_newtemp());
     }
@@ -143,14 +143,14 @@ F_frame F_newFrame(Temp_label name,U_boolList formals){
     }
     formals = formals->tail;
   }
-  f_frame->max_offset = offset;
+  f_frame->max_offset = 0;
   f_frame->formals = f_accessList_h;
   return f_frame;
 }
 F_access F_allocLocal(F_frame f,bool escape){
   F_access f_access = NULL;
   if(escape){
-    f_access = InFrame(f->max_offset--);
+    f_access = InFrame(--f->max_offset);
   }else{
     f_access = InReg(Temp_newtemp());
   }
