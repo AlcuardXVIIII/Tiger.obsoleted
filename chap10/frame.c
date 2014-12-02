@@ -76,12 +76,6 @@ Temp_map F_temp2Name(){
     Temp_enter(temp2map,F_ESI(),"%esi");
     Temp_enter(temp2map,F_EDI(),"%edi");
     Temp_enter(temp2map,F_ESP(),"%esp");
-    Temp_enter(temp2map,F_EBP(),"%ebp");
-
-
-
-
-    Temp_enter(temp2map,F_RV(),"%rv");
   }
   return temp2map;
 }
@@ -90,11 +84,12 @@ Temp_temp F_FP(){
   return F_EBP();
 }
 Temp_temp F_RV(){
-  static Temp_temp temp_RV = NULL;
+  /*  static Temp_temp temp_RV = NULL;
   if(temp_RV==NULL){
     temp_RV = Temp_newtemp();
   }
-  return temp_RV;
+  return temp_RV;*/
+  return F_EAX();
 }
 Temp_tempList F_callee_saves(){
   static Temp_tempList temp_tempList = NULL;
