@@ -4,8 +4,8 @@
 #include "symbol.h"
 #include "temp.h"
 #include "tree.h"
-#include "frame.h"
 #include "assem.h"
+#include "frame.h"
 
 static AS_instrList iList = NULL,last = NULL;
 static void emit(AS_instr inst);
@@ -30,7 +30,7 @@ AS_instrList F_codegen(F_frame f,T_stmList stmList){
   }
   list = iList;
   iList = last = NULL;
-  return list;
+  return procEntryExit(f,list);
 }
 
 static Temp_tempList munchArgs(int n,T_expList t_expList){

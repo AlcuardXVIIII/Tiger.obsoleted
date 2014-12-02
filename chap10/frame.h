@@ -54,3 +54,4 @@ F_fragList F_FragList(F_frag head,F_fragList tail);
 Temp_map F_temp2Name();
 Temp_tempList F_callee_saves();
 Temp_tempList F_caller_saves();
+AS_instrList procEntryExit(F_frame f,AS_instrList as_instrList);

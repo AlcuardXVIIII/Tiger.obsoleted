@@ -8,6 +8,7 @@
 #include "types.h"
 #include "temp.h"
 #include "tree.h"
+#include "assem.h"
 #include "frame.h"
 #include "translate.h"
 #include "env.h"

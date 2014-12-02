@@ -10,6 +10,7 @@
 #include "temp.h"
 #include "tree.h"
 #include "escape.h"
+#include "assem.h"
 #include "frame.h"
 #include "translate.h"
 #include "printtree.h"
@@ -17,7 +18,6 @@
 #include "bst.h"
 #include "semant.h"
 #include "canon.h"
-#include "assem.h"
 #include "codegen.h"
 
 extern int yyparse(void);
@@ -51,7 +51,7 @@ void SEM_transProg(A_exp exp){
       AS_printInstrList(stdout,as_instrList,F_temp2Name());
     }
     else{
-      fprintf(stdout,"%s:\n    .ascii %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);
+      fprintf(stdout,"%s:\n    .string %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);
     }
     f_fragList = f_fragList->tail;
   }
