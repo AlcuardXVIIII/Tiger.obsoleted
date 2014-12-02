@@ -34,24 +34,11 @@ AS_instrList F_codegen(F_frame f,T_stmList stmList){
 }
 
 static Temp_tempList munchArgs(int n,T_expList t_expList){
-  static AS_instrList as_instrList_h = NULL;
-  if(t_expList==NULL){
-    return NULL;
-  }
+  if(t_expList==NULL)return NULL;
   Temp_temp r = munchExp(t_expList->head);
   Temp_tempList others = munchArgs(n+1,t_expList->tail);
-
   string instr = string_format("    pushl `s0\n");
-  AS_instr inst =   AS_Oper(instr,NULL,L(r,NULL),NULL);;
-  as_instrList_h = AS_InstrList(inst,as_instrList_h);
-
-
-  if(n==0){
-    while(as_instrList_h!=NULL){
-      emit(as_instrList_h->head);
-      as_instrList_h = as_instrList_h->tail;
-    }
-  }
+  emit(AS_Oper(instr,NULL,L(r,NULL),NULL));
   return L(r,others);
 }
 
