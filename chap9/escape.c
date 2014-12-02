@@ -128,7 +128,8 @@ static void traverseDec(S_table env,int depth,A_dec d){
       A_fieldList a_fieldList = a_fundec->params;
       S_beginScope(env);
       while(a_fieldList!=NULL){
-        S_enter(env,a_fieldList->head->name,Esc_newBinding(depth+1,&a_fieldList->head->escape));
+        bool* strangeBool = checked_malloc(sizeof(*strangeBool));
+        S_enter(env,a_fieldList->head->name,Esc_newBinding(depth+1,strangeBool));
         a_fieldList = a_fieldList->tail;
       }
       traverseExp(env,depth+1,a_fundec->body);
