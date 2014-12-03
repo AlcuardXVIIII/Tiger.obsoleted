@@ -64,6 +64,7 @@ G_graph FG_AssemFlowGraph(AS_instrList il){
         TAB_enter(tab_table,temp_label,g_node);
         temp_label = NULL;
       }
+      pre = g_node;
       break;
     case I_LABEL:
       temp_label = as_instr->u.LABEL.label;
@@ -71,7 +72,6 @@ G_graph FG_AssemFlowGraph(AS_instrList il){
     default:
       assert(0);
     }
-    pre = g_node;
     il = il->tail;
   }
   while(g_nodeList!=NULL){
