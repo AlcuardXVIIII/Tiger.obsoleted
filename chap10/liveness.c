@@ -86,9 +86,15 @@ Temp_temp Live_gtemp(G_node n){
   return n->info;
 }
 Live_graph Live_liveness(G_graph flow){
+  /*
+   *inital return valus;
+   */
   Live_graph live_graph = checked_malloc(sizeof(*live_graph));
   G_graph g_graph = G_Graph();
   Live_moveList live_moveList = checked_malloc(sizeof(*live_moveList));
+  live_graph->graph = g_graph;
+  live_graph->moves = live_moveList;
+
 
   G_table g_table_in = G_empty();
   G_table g_table_out = G_empty();
@@ -123,22 +129,33 @@ Live_graph Live_liveness(G_graph flow){
     p = p->tail;
   }
   TAB_table Temp2Node = TAB_empty();
-
   while(p!=NULL){
     G_node g_node = p->head;
     Temp_tempList defTempList = FG_def(g_node);
     Temp_tempList useTempList = FG_use(g_node);
+    Temp_tempList tempList = useTempList;
     if(FG_isMove(g_node)){
-      Temp_tempList tempList = differenceSet(defTempList,useTempList);
-      while(defTempList!=NULL){
-        if(TAB_look())
-        while(tempList!=NULL){
-          tempList = tempList->tail;
-        }
-        defTempList = defTempList->tail;
+      tempList = differenceSet(defTempList,tempList);
+    }
+    while(defTempList!=NULL){
+      Temp_temp defTemp = defTempList->head;
+      G_node def_node = TAB_look(Temp2Node,defTemp);
+      if(def_node==NULL){
+        def_node = G_Node(g_graph,defTemp);
+        TAB_enter(Temp2Node,defTemp,def_node);
       }
-    }else{
-
+      while(tempList!=NULL){
+        Temp_temp useTemp = tempList->head;
+        G_node use_node = TAB_look(Temp2Node,useTemp);
+        if(use_node==NULL){
+          use_node = G_Node(g_graph,useTemp);
+          TAB_enter(Temp2Node,useTemp,use_node);
+        }
+        G_addEdge(def_node,use_node);
+        G_addEdge(use_node,def_node);
+        tempList = tempList->tail;
+      }
+      defTempList = defTempList->tail;
     }
     p = p->tail;
   }
