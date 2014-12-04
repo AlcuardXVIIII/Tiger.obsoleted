@@ -11,21 +11,9 @@
 #include "absyn.h"
 #include "assem.h"
 #include "frame.h"
-#include "graph.h"
 #include "errormsg.h"
 #include "table.h"
-
-struct G_graph_ {int nodecount;
-		 G_nodeList mynodes, mylast;
-	       };
-
-struct G_node_ {
-  G_graph mygraph;
-  int mykey;
-  G_nodeList succs;
-  G_nodeList preds;
-  void *info;
-};
+#include "graph.h"
 
 G_graph G_Graph(void)
 {G_graph g = (G_graph) checked_malloc(sizeof *g);
