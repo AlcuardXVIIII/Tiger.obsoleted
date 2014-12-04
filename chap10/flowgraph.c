@@ -78,7 +78,7 @@ G_graph FG_AssemFlowGraph(AS_instrList il){
     G_node g_node = g_nodeList->head;
     AS_instr as_instr = G_nodeInfo(g_node);
     assert(as_instr);
-    Temp_labelList temp_labelList = as_instr->u.OPER.jumps->labels;
+    Temp_labelList temp_labelList = as_instr->u.OPER.jumps ? as_instr->u.OPER.jumps->labels : NULL;
     while(temp_labelList!=NULL){
       Temp_label temp_label = temp_labelList->head;
       G_node g_destNode = TAB_look(tab_table,temp_label);

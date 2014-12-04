@@ -19,6 +19,9 @@
 #include "semant.h"
 #include "canon.h"
 #include "codegen.h"
+#include "graph.h"
+#include "flowgraph.h"
+#include "liveness.h"
 
 extern int yyparse(void);
 extern A_exp absyn_root;
@@ -49,6 +52,13 @@ void SEM_transProg(A_exp exp){
       //      printStmList(stdout,t_stmList);
       AS_instrList as_instrList = F_codegen(f_frag->u.proc.frame,t_stmList);
       AS_printInstrList(stdout,as_instrList,F_temp2Name());
+      //new
+
+      G_graph g_graph = FG_AssemFlowGraph(as_instrList);
+      //      Live_graph live_graph = Live_liveness(g_graph);
+
+
+      //new
     }
     else{
       fprintf(stdout,"%s:\n    .string %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);
