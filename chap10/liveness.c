@@ -69,6 +69,14 @@ static G_nodeList reverseList(G_nodeList g_nodeList){
   }
   return re;
 }
+static G_node getNodeByTemp(TAB_table table,G_graph graph,Temp_temp temp){
+  G_node g_node = TAB_look(table,temp);
+  if(g_node==NULL){
+    g_node = G_Node(graph,temp);
+    TAB_enter(table,temp,g_node);
+  }
+  return g_node;
+}
 static void enterLiveMap(G_table t,G_node flowNode,Temp_tempList temp){
   G_enter(t,flowNode,temp);
 }
@@ -129,24 +137,17 @@ Live_graph Live_liveness(G_graph flow){
     G_node g_node = p->head;
     Temp_tempList defTempList = FG_def(g_node);
     Temp_tempList useTempList = FG_use(g_node);
-    Temp_tempList tempList = useTempList;
+    Temp_tempList tempList = differenceSet(useTempList,defTempList);
     if(FG_isMove(g_node)){
       tempList = differenceSet(defTempList,useTempList);
+      live_moveList = Live_MoveList(getNodeByTemp(Temp2Node,g_graph,defTempList->head),getNodeByTemp(Temp2Node,g_graph,useTempList->head),live_moveList);
     }
     while(defTempList!=NULL){
       Temp_temp defTemp = defTempList->head;
-      G_node def_node = TAB_look(Temp2Node,defTemp);
-      if(def_node==NULL){
-        def_node = G_Node(g_graph,defTemp);
-        TAB_enter(Temp2Node,defTemp,def_node);
-      }
+      G_node def_node = getNodeByTemp(Temp2Node,g_graph,defTemp);
       while(tempList!=NULL){
         Temp_temp useTemp = tempList->head;
-        G_node use_node = TAB_look(Temp2Node,useTemp);
-        if(use_node==NULL){
-          use_node = G_Node(g_graph,useTemp);
-          TAB_enter(Temp2Node,useTemp,use_node);
-        }
+        G_node use_node = getNodeByTemp(Temp2Node,g_graph,useTemp);
         G_addEdge(def_node,use_node);
         G_addEdge(use_node,def_node);
         tempList = tempList->tail;

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 #include "util.h"
 #include "symbol.h"
 #include "table.h"
@@ -39,7 +40,9 @@ Temp_tempList FG_use(G_node n){
 bool FG_isMove(G_node n){
   AS_instr as_instr = G_nodeInfo(n);
   assert(as_instr);
-  return as_instr->kind==I_MOVE;
+  if(as_instr->kind==I_MOVE&&strcmp(as_instr->u.MOVE.assem,"    movl `s0,`d0\n")==0)
+    return TRUE;
+  return FALSE;
 }
 G_graph FG_AssemFlowGraph(AS_instrList il){
   AS_instr as_instr = NULL;
