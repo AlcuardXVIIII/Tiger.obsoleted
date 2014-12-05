@@ -32,8 +32,8 @@ static Temp_tempList differenceSet(Temp_tempList set1,Temp_tempList set2){
         re_tail->tail = temp;
         re_tail = re_tail->tail;
       }
-      set1 = set1->tail;
     }
+    set1 = set1->tail;
   }
   return re_head;
 }
@@ -87,7 +87,7 @@ Temp_temp Live_gtemp(G_node n){
 }
 Live_graph Live_liveness(G_graph flow){
   /*
-   *inital return valus;
+   *initalize return value;
    */
   Live_graph live_graph = checked_malloc(sizeof(*live_graph));
   G_graph g_graph = G_Graph();
@@ -95,15 +95,13 @@ Live_graph Live_liveness(G_graph flow){
   live_graph->graph = g_graph;
   live_graph->moves = live_moveList;
 
-
   G_table g_table_in = G_empty();
   G_table g_table_out = G_empty();
 
   G_nodeList g_nodeList = reverseList(G_nodes(flow));
   G_nodeList p = g_nodeList;
-  bool hasChanged = TRUE;
-  while(p!=NULL||((p=g_nodeList)&&hasChanged)){
-    hasChanged = FALSE;
+  bool hasChanged = FALSE;
+  while(p!=NULL||((p=g_nodeList)&&hasChanged&&(hasChanged=FALSE)==FALSE)){
     G_node g_node = p->head;
     Temp_tempList oldTempList_in = lookupLiveMap(g_table_in,g_node);
     Temp_tempList oldTempList_out = lookupLiveMap(g_table_out,g_node);
@@ -118,12 +116,10 @@ Live_graph Live_liveness(G_graph flow){
 
     if(setSize(oldTempList_in)!=setSize(newTempList_in)){
       hasChanged = TRUE;
-    }else{
       enterLiveMap(g_table_in,g_node,newTempList_in);
     }
     if(setSize(oldTempList_out)!=setSize(newTempList_out)){
       hasChanged = TRUE;
-    }else{
       enterLiveMap(g_table_out,g_node,newTempList_out);
     }
     p = p->tail;
@@ -135,7 +131,7 @@ Live_graph Live_liveness(G_graph flow){
     Temp_tempList useTempList = FG_use(g_node);
     Temp_tempList tempList = useTempList;
     if(FG_isMove(g_node)){
-      tempList = differenceSet(defTempList,tempList);
+      tempList = differenceSet(defTempList,useTempList);
     }
     while(defTempList!=NULL){
       Temp_temp defTemp = defTempList->head;
