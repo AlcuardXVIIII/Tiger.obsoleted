@@ -22,3 +22,4 @@ struct Live_moveList2_{
   Live_moveList2 next;
 };
 Live_moveList2 Live_MoveList2(G_node src,G_node dst,Live_moveList2 pre,Live_moveList2 next);
+

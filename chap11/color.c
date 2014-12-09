@@ -24,6 +24,38 @@ static Live_moveList2 frozenMoves = NULL;
 static Live_moveList2 workListMoves = NULL;
 static Live_moveList2 activeMoves = NULL;
 
+static int* degree = NULL;
+static G_nodeList2* adjList = NULL;
+static int n;
+static bool* adjSet = NULL;
+void initAdjSet(int n){
+  adjSet = checked_malloc(n*n*sizeof(bool));
+  int i;
+  for(i=0;i<n*n;i++){
+    adjSet[i] = FALSE;
+  }
+}
+void initAdjList(int n){
+  adjList = checked_malloc(n*sizeof(G_nodeList2));
+  int i;
+  for(i = 0;i < n;i++){
+    adjList[i] = NULL;
+  }
+}
+void initDegree(int n){
+  degree = checked_malloc(n*sizeof(int));
+  int i;
+  for(i = 0;i < n;i++){
+    degree[i] = 0;
+  }
+}
+void decDegree(int i){
+  degree[i]++;
+}
+void incDegree(int i){
+  degree[i]--;
+  assert(degree[i]>=0);
+}
 
 G_nodeList2 G_NodeList2(G_node node,G_nodeList2 pre,G_nodeList2 next){
   G_nodeList2 g_nodeList2 = checked_malloc(sizeof(*g_nodeList2));
