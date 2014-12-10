@@ -5,8 +5,8 @@
 typedef struct COL_result_ *COL_result;
 typedef struct G_nodeList2_ *G_nodeList2;
 typedef struct Live_moveList2_ *Live_moveList2;
-typedef enum { SIMPLIFY, SPILL, FREEZE, OTHER } KIND1;
-typedef enum{ COALESCED, CONSTRAINT, FROZEN, WORKLIST, ACTIVE }KIND2;
+typedef enum { PRECOLORED, SIMPLIFYWORKLIST, FREEZEWORKLIST, SPILLWORKLIST, SPILLEDNODES, COALESCEDNODES, COLOREDNODES, SELECTSTACK,DEFAULT1 } KIND1;
+typedef enum{ COALESCEDMOVES, CONSTRAINTMOVES, FROZENMOVES, WORKLISTMOVES, ACTIVEMOVES ,DEFAULT2}KIND2;
 
 struct COL_result_ {Temp_map coloring; Temp_tempList spills;};
 COL_result COL_color(G_graph ig, Temp_map initial, Temp_tempList regs);
