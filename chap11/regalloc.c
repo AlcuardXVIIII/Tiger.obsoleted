@@ -9,7 +9,8 @@
 #include "color.h"
 #include "tree.h"
 #include "frame.h"
-#include "regallo.c"
+#include "color.h"
+#include "regalloc.h"
 
 RA_result RA_regAlloc(F_frame f,AS_instrList il){
   G_graph g_graph = FG_AssemFlowGraph(il);
