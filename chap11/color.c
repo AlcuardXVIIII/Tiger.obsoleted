@@ -27,9 +27,30 @@ static Live_moveList2 workListMoves = NULL;
 static Live_moveList2 activeMoves = NULL;
 
 void init(){
-  precolored = G_NodeList2(NULL,NULL,NULL);
-  simplifyWorklist = G_NodeList2(NULL,NULL,NULL);
-  freezeWorklist = G_NodeList2(NULL,NULL,NULL);
+	precolored = G_NodeList2(NULL,NULL,NULL);
+	setOther(precolored);
+	simplifyWorklist = G_NodeList2(NULL,NULL,NULL);
+	setSimplify(simplifyWorklist);
+	freezeWorklist = G_NodeList2(NULL,NULL,NULL);
+	setFreeze(freezeWorklist);
+	spillWorklist = G_NodeList2(NULL, NULL, NULL);
+	setSimplify(spillWorklist);
+	spilledNodes = G_NodeList2(NULL, NULL, NULL);
+	setOther(spilledNodes);
+	coalescedNodes = G_NodeList2(NULL, NULL, NULL);
+	setOther(coalescedNodes);
+	coloredNodes = G_NodeList2(NULL, NULL, NULL);
+	setOther(coloredNodes);
+	selectStack = G_NodeList2(NULL, NULL, NULL);
+	setOther(selectStack);
+	coalescedMoves = Live_MoveList2(NULL, NULL, NULL, NULL);
+	setCoalesced(coalescedMoves);
+	frozenMoves = Live_MoveList2(NULL, NULL, NULL, NULL);
+	setFrozen(frozenMoves);
+	workListMoves = Live_MoveList2(NULL, NULL, NULL, NULL);
+	setWorkList(workListMoves);
+	activeMoves = Live_MoveList2(NULL, NULL, NULL, NULL);
+	setActive(activeMoves);
 }
 
 static int* degree = NULL;
@@ -165,18 +186,58 @@ static G_nodeList2 unionSet2(Live_moveList2 set1,Live_moveList2 set2){
   return head;
 }
 static void append1(G_nodeList2 set,G_nodeList2 node){
-  node->pre = NULL;
-  node->next = set;
-  set = node;
+	node->pre = set;
+	if (set->next != NULL){
+		set->next->pre = node;
+	}
+	node->next = set->next;
+	set->next = node;
 }
-static bool isContain1(G_nodeList2 set1,G_nodeList)
-static void append2(Live_moveList2 set,Live_moveList2 node){
-  node->pre = NULL;
-  node->next = set;
-  set = node;
-}
-static G_nodeList2 diffSet(G_nodeList2 set1,G_nodeList2 set2){
 
+static void append2(Live_moveList2 set,Live_moveList2 node){
+	node->pre = set;
+	if (set->next != NULL){
+		set->next->pre = node;
+	}
+	node->next = set->next;
+	set->next = node;
+}
+static bool isContain1(G_nodeList2 set, G_node node){
+	while (set != NULL){
+		if (set->node == node){
+			return TRUE;
+		}
+		set = set->next;
+	}
+	return FALSE;
+}
+static G_nodeList2 diffSet1(G_nodeList2 set1,G_nodeList2 set2){
+	G_nodeList2 head, tail;
+	while (set1 != NULL){
+		if (!isContain1(set2, set1->node)){
+			if (tail == NULL){
+				head = tail = G_NodeList2(set1->node, NULL, NULL);
+			}
+			else{
+				G_nodeList2 node = G_NodeList2(set1->node, tail, NULL);
+				tail = tail->next = node;
+			}
+		}
+		set1 = set1->next;
+	}
+	return head;
+}
+static void delete1(G_nodeList2 set, G_node node){
+	while (set != NULL){
+		if (set->node == node){
+			set->pre->next = set->next;
+			if (set->next != NULL){
+				set->next->pre = set->pre;
+			}
+			return;
+		}
+		set = set->next;
+	}
 }
 COL_result COL_color(G_graph ig,Temp_map inital,Temp_tempList regs){
   COL_result col_result = checked_malloc(sizeof(*col_result));
