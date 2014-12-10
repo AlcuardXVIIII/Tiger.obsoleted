@@ -141,6 +141,30 @@ static void append1(G_nodeList2* set,G_node2 node){
 	/*
 	 * node<------->(node2<----->node1)==set
 	 */
+	if (*set == precolored){
+		node->kind == PRECOLORED;
+	}
+	else if (*set == simplifyWorklist){
+		node->kind == SIMPLIFYWORKLIST;
+	}
+	else if (*set == freezeWorklist){
+		node->kind == FREEZEWORKLIST;
+	}
+	else if (*set == spillWorklist){
+		node->kind == SPILLWORKLIST;
+	}
+	else if (*set == spilledNodes){
+		node->kind == SPILLEDNODES;
+	}
+	else if (*set == coalescedNodes){
+		node->kind == COALESCEDNODES;
+	}
+	else if (*set == coloredNodes){
+		node->kind == COLOREDNODES;
+	}
+	else if (*set == selectStack){
+		node->kind == SELECTSTACK;
+	}
 	G_nodeList2 g_nodeList2 = G_NodeList2(node, NULL, NULL);
 	if (*set == NULL){
 		*set = g_nodeList2;
@@ -155,6 +179,21 @@ static void append2(Live_moveList2* set, Live_moveList2node node){
 	/*
 	* node<------->(node2<----->node1)==set
 	*/
+	if (*set == coalescedMoves){
+		node->kind = COALESCEDMOVES;
+	}
+	else if (*set == constraintMoves){
+		node->kind = CONSTRAINTMOVES;
+	}
+	else if (*set == frozenMoves){
+		node->kind = FROZENMOVES;
+	}
+	else if (*set == worklistMoves){
+		node->kind = WORKLISTMOVES;
+	}
+	else if (*set == activeMoves){
+		node->kind = ACTIVEMOVES;
+	}
 	Live_moveList2 live_moveList2 = Live_MoveList2(node, NULL, NULL);
 	if (*set == NULL){
 		*set = live_moveList2;
@@ -289,7 +328,7 @@ static void delete2(Live_moveList2* set_, Live_moveList2node node){
 		*set = *set->next;
 	}
 }
-static G_node2 peek(G_nodeList2* set){
+static G_node2 peek1(G_nodeList2* set){
 	if (*set != NULL){
 		G_node2 node = (*set)->value;
 		delete1(set, node);
@@ -298,8 +337,7 @@ static G_node2 peek(G_nodeList2* set){
 	return NULL;
 }
 static void push(G_nodeList2* stack, G_node2 node){
-	G_nodeList2 g_nodeList2 = G_NodeList2(node, NULL, *stack);
-	*stack = g_nodeList2;
+	append1(stack, node);
 }
 static bool isLink(int m, int n){
 	return adjSet[m*length + n];
@@ -322,7 +360,7 @@ static void addEdge(G_node2 node1, G_node2 node2){
 	}
 }
 static Live_moveList2 NodeMoves(G_node2 node){
-	return interSet2(TAB_look(moveList, node), unionSet1(activeMoves, workListMoves));
+	return interSet2(TAB_look(moveList, node), unionSet2(activeMoves, worklistMoves));
 }
 static bool moveRelated(G_node2 node){
 	return !isEmpty1(NodeMoves(node));
@@ -332,15 +370,12 @@ static void makeWorklist(G_nodeList2 initial){
 		G_node2 g_node2 = initial->value;
 		int pos = g_node2->node->mygraph;
 		if (degree[pos] >= K){
-			g_node2->kind = SPILLWORKLIST;
 			append1(spillWorklist, g_node2);
 		}
 		else if (moveRelated(g_node2)){
-			g_node2->kind = FREEZEWORKLIST;
 			append1(freezeWorklist, g_node2);
 		}
 		else{
-			g_node2->kind = SIMPLIFYWORKLIST;
 			append1(simplifyWorklist, g_node2);
 		}
 		initial = initial->next;
@@ -351,7 +386,7 @@ static G_nodeList2 adjacent(G_node2 node){
 }
 static void Simplify(){
 	if (simplifyWorklist != NULL){
-		G_node2 node = peek(simplifyWorklist);
+		G_node2 node = peek1(simplifyWorklist);
 		push(selectStack, node);
 		G_nodeList2 g_nodeList = adjacent(node);
 		while (g_nodeList != NULL){
