@@ -32,11 +32,13 @@ static bool* adjSet = NULL;
 static TAB_table moveList = NULL;
 static TAB_table alias = NULL;
 static TAB_table color = NULL;
+static TAB_table G_nodeMapG_node2 = NULL;
 //数据结构初始化
 void init(){
 	moveList = TAB_empty();
 	alias = TAB_emtpy();
 	color = TAB_empty();
+	G_nodeMapG_node2 = TAB_emtpy();
 }
 
 void initAdjSet(int n){
@@ -142,28 +144,28 @@ static void append1(G_nodeList2* set,G_node2 node){
 	 * node<------->(node2<----->node1)==set
 	 */
 	if (*set == precolored){
-		node->kind == PRECOLORED;
+		node->kind = PRECOLORED;
 	}
 	else if (*set == simplifyWorklist){
-		node->kind == SIMPLIFYWORKLIST;
+		node->kind = SIMPLIFYWORKLIST;
 	}
 	else if (*set == freezeWorklist){
-		node->kind == FREEZEWORKLIST;
+		node->kind = FREEZEWORKLIST;
 	}
 	else if (*set == spillWorklist){
-		node->kind == SPILLWORKLIST;
+		node->kind = SPILLWORKLIST;
 	}
 	else if (*set == spilledNodes){
-		node->kind == SPILLEDNODES;
+		node->kind = SPILLEDNODES;
 	}
 	else if (*set == coalescedNodes){
-		node->kind == COALESCEDNODES;
+		node->kind = COALESCEDNODES;
 	}
 	else if (*set == coloredNodes){
-		node->kind == COLOREDNODES;
+		node->kind = COLOREDNODES;
 	}
 	else if (*set == selectStack){
-		node->kind == SELECTSTACK;
+		node->kind = SELECTSTACK;
 	}
 	G_nodeList2 g_nodeList2 = G_NodeList2(node, NULL, NULL);
 	if (*set == NULL){
@@ -206,6 +208,31 @@ static void append2(Live_moveList2* set, Live_moveList2node node){
 }
 //判断集合是否包含某元素
 static bool isContain1(G_nodeList2 set, G_node2 node){
+
+	if (set == precolored){
+		return node->kind == PRECOLORED;
+	}
+	else if (set == simplifyWorklist){
+		return node->kind == SIMPLIFYWORKLIST;
+	}
+	else if (set == freezeWorklist){
+		return node->kind == FREEZEWORKLIST;
+	}
+	else if (set == spillWorklist){
+		return node->kind == SPILLWORKLIST;
+	}
+	else if (set == spilledNodes){
+		return node->kind == SPILLEDNODES;
+	}
+	else if (set == coalescedNodes){
+		return node->kind == COALESCEDNODES;
+	}
+	else if (set == coloredNodes){
+		return node->kind == COLOREDNODES;
+	}
+	else if (set == selectStack){
+		return node->kind == SELECTSTACK;
+	}
 	while (set != NULL){
 		if (set->value == node){
 			return TRUE;
@@ -336,6 +363,17 @@ static G_node2 peek1(G_nodeList2* set){
 	}
 	return NULL;
 }
+static G_node2 pop1(G_nodeList2* stack){
+	return peek1(stack);
+}
+static Live_moveList2node peek2(Live_moveList2* set){
+	if (*set != NULL){
+		Live_moveList2node node = (*set)->value;
+		delete2(set, node);
+		return node;
+	}
+	return NULL;
+}
 static void push(G_nodeList2* stack, G_node2 node){
 	append1(stack, node);
 }
@@ -386,21 +424,21 @@ static G_nodeList2 adjacent(G_node2 node){
 }
 static void Simplify(){
 	if (simplifyWorklist != NULL){
-		G_node2 node = peek1(simplifyWorklist);
+		G_node2 node = peek1(&simplifyWorklist);
 		push(selectStack, node);
 		G_nodeList2 g_nodeList = adjacent(node);
 		while (g_nodeList != NULL){
-			decrement(g_nodeList->value);
+			decrementDegree(g_nodeList->value);
 			g_nodeList = g_nodeList->next;
 		}
 	}
 }
-static void decrement(G_node2 node){
+static void decrementDegree(G_node2 node){
 	int d = degree[node->node->mykey];
 	degree[node->node->mykey]--;
 	if (d == K){
 		enableMoves(unionSet1(adjacent(node), G_NodeList2(node, NULL, NULL)));
-		delete1(spillWorklist, node);
+		delete1(&spillWorklist, node);
 		if (moveRelated(node)){
 			append1(freezeWorklist, node);
 		}
@@ -414,11 +452,161 @@ static void enableMoves(G_nodeList2 g_nodeList2){
 		Live_moveList2 live_moveList2 = NodeMoves(g_nodeList2->value);
 		while (live_moveList2 != NULL){
 			if (live_moveList2->value->kind == ACTIVEMOVES){
-				delete2(activeMoves, live_moveList2->value);
+				delete2(&activeMoves, live_moveList2->value);
 				append2(worklistMoves, live_moveList2->value);
 			}
 			live_moveList2 = live_moveList2->next;
 		}
+		g_nodeList2 = g_nodeList2->next;
+	}
+}
+static void coalesce(){
+	Live_moveList2node  node = peek2(&worklistMoves);
+	G_node2 x = TAB_look(G_nodeMapG_node2, node->move->dst);
+	G_node2 y = TAB_look(G_nodeMapG_node2, node->move->src);
+	G_node2 u = x;
+	G_node2 v = y;
+	if (isContain1(precolored, y)){
+		u = y;
+		v = x;
+	}
+	if (u == v){
+		append2(coalescedMoves, node);
+		addWorkList(u);
+	}
+	else if (isContain1(precolored, v) || isLink(u->node->mykey,v->node->mykey)){
+		append2(constraintMoves, node);
+		addWorkList(u);
+		addWorkList(v);
+	}
+	else {
+		bool bFlag = TRUE;
+		if (isContain1(precolored, u)){
+			G_nodeList2 g_nodeList2 = adjacent(v);
+			while (g_nodeList2 != NULL){
+				if (!OK(g_nodeList2->value, u)){
+					bFlag = FALSE;
+					break;
+				}
+				g_nodeList2 = g_nodeList2->next;
+			}
+		}
+		else{
+			bFlag = FALSE;
+		}
+		if (bFlag || !isContain1(precolored, u) && conservative(unionSet1(adjacent(u), adjacent(v)))){
+			append2(coalescedMoves, node);
+			combine(u, v);
+			addWorkList(u);
+		}
+		else{
+			append2(activeMoves, node);
+		}
+	}
+}
+static void addWorkList(G_node2 node){
+	if (isContain1(precolored,node) && !moveRelated(node) && degree[node->node->mykey] < K){
+		delete1(&freezeWorklist, node);
+		append1(simplifyWorklist, node);
+	}
+}
+static bool OK(G_node2 t, G_node2 r){
+	return degree[t->node->mykey] < K || isContain1(precolored, t) || isLink(t->node->mykey, r->node->mykey);
+}
+static bool conservative(G_nodeList2 nodes){
+	int k = 0;
+	while (nodes != NULL){
+		if (degree[nodes->value->node->mykey] >= K){
+			k++;
+		}
+		nodes = nodes->next;
+	}
+	return k < K;
+}
+static bool getAlias(G_node2 node){
+	if (isContain1(coalescedNodes, node)){
+		getAlias(TAB_look(alias, node));
+	}
+	else node;
+}
+static void combine(G_node2 u, G_node2 v){
+	if (isContain1(v, freezeWorklist)){
+		delete1(&freezeWorklist, v);
+	}
+	else{
+		delete1(&spillWorklist, v);
+	}
+	append1(coalescedNodes, v);
+	TAB_enter(alias, v, u);
+	TAB_enter(moveList,u,unionSet2(TAB_look(moveList, u), TAB_look(moveList, v)));
+	enableMoves(v);
+	G_nodeList2 g_nodeList2 = adjancent(v);
+	while (g_nodeList2 != NULL){
+		addEdge(g_nodeList2->value, u);
+		decrementDegree(g_nodeList2->value);
+		g_nodeList2 = g_nodeList2->next;
+	}
+	if (degree[u->node->mykey] >= K&&isContain1(u, freezeWorklist)){
+		delete1(&freezeWorklist, u);
+		append1(spillWorklist, u);
+	}
+}
+static void freeze(){
+	G_node2 node = peek1(&freezeWorklist);
+	append1(simplifyWorklist, node);
+	freezeMoves(node);
+}
+static void freezeMoves(G_node2 u){
+	Live_moveList2 live_moveList2 = NodeMoves(u);
+	while (live_moveList2 != NULL){
+		Live_moveList2node m = live_moveList2->value;
+		G_node2 x = TAB_look(G_nodeMapG_node2,m->move->dst);
+		G_node2 y = TAB_look(G_nodeMapG_node2, m->move->src);
+		G_node2 v = getAlias(y);
+		if (getAlias(y) == getAlias(u)){
+			v = getAlias(x);
+		}
+		delete2(&activeMoves, m);
+		append2(frozenMoves, m);
+		if (isEmpty1(NodeMoves(v)) && degree[v->node->mykey] < K){
+			delete2(&freezeWorklist, v);
+			append1(simplifyWorklist, v);
+		}
+		live_moveList2 = live_moveList2->next;
+	}
+}
+static void selectSpill(){
+	G_node2 m = peek1(&spillWorklist);
+	append1(simplifyWorklist, m);
+	freezeMoves(m);
+}
+static G_nodeList2 allReg(){
+	return unionSet1(precolored, NULL);
+}
+static void assignColors(){
+	while (!isEmpty1(selectStack)){
+		G_node2 n = pop(selectStack);
+		G_nodeList2 okColors = allReg();
+		G_nodeList2 g_nodeList2 = adjList[n->node->mykey];
+		while (g_nodeList2){
+			G_node2 w = g_nodeList2->value;
+			if (isContain1(unionSet1(coloredNodes,precolored),getAlias(w))){
+				G_node2 g_node2 = TAB_look(color, getAlias(w));
+				delete1(okColors, g_node2);
+			}
+			g_nodeList2->next;
+		}
+		if (isEmpty1(okColors)){
+			append1(spilledNodes, n);
+		}
+		else{
+			append1(coloredNodes, n);
+			TAB_enter(color, n, okColors->value);
+		}
+	}
+	G_nodeList2 g_nodeList2 = coalescedMoves;
+	while (g_nodeList2 != NULL){
+		TAB_enter(color, g_nodeList2->value, TAB_look(color, getAlias(g_nodeList2->value));
 		g_nodeList2 = g_nodeList2->next;
 	}
 }
