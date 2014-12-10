@@ -69,7 +69,7 @@ void incDegree(int i){
   degree[i]--;
   assert(degree[i]>=0);
 }
-//创建集合中的结点
+//创建新的结点
 G_nodeList2 G_NodeList2(G_node2 node,G_nodeList2 pre,G_nodeList2 next){
   G_nodeList2 g_nodeList2 = checked_malloc(sizeof(*g_nodeList2));
   g_nodeList2->value = node;
@@ -242,6 +242,21 @@ static bool isContain1(G_nodeList2 set, G_node2 node){
 	return FALSE;
 }
 static bool isContain2(Live_moveList2 set, Live_moveList2node node){
+	if (set == coalescedMoves){
+		return node->kind == COALESCEDMOVES;
+	}
+	else if (set == constraintMoves){
+		return node->kind == CONSTRAINTMOVES;
+	}
+	else if (set == frozenMoves){
+		return node->kind == FROZENMOVES;
+	}
+	else if (set == worklistMoves){
+		return node->kind == WORKLISTMOVES;
+	}
+	else if (set == activeMoves){
+		return node->kind == ACTIVEMOVES;
+	}
 	while (set != NULL){
 		if (set->value == node){
 			return TRUE;
@@ -305,10 +320,10 @@ static Live_moveList2 interSet2(Live_moveList2 set1, Live_moveList2 set2){
 	while (set1 != NULL){
 		if (isContain2(set2, set1->value)){
 			if (tail == NULL){
-				head = tail = G_NodeList2(set1->value, NULL, NULL);
+				head = tail = Live_MoveList2(set1->value, NULL, NULL);
 			}
 			else{
-				G_nodeList2 node = G_NodeList2(set1->value, tail, NULL);
+				Live_moveList2 node = Live_MoveList2(set1->value, tail, NULL);
 				tail = tail->next = node;
 			}
 		}
@@ -338,7 +353,7 @@ static void delete1(G_nodeList2* set_, G_node2 node){
 }
 static void delete2(Live_moveList2* set_, Live_moveList2node node){
 	assert(*set_);
-	G_nodeList2 set = *set_;
+	Live_moveList2 set = *set_;
 	while (set != NULL){
 		if (set->value == node){
 			if (set->pre != NULL){
@@ -390,10 +405,10 @@ static void addEdge(G_node2 node1, G_node2 node2){
 		addEdge_(m, n);
 		addEdge_(n, m);
 		if (node1->kind != PRECOLORED){
-			append1(adjList[m], node2);
+			append1(&adjList[m], node2);
 		}
 		if (node2->kind != PRECOLORED){
-			append1(adjList[n], node1);
+			append1(&adjList[n], node1);
 		}
 	}
 }
@@ -408,13 +423,13 @@ static void makeWorklist(G_nodeList2 initial){
 		G_node2 g_node2 = initial->value;
 		int pos = g_node2->node->mygraph;
 		if (degree[pos] >= K){
-			append1(spillWorklist, g_node2);
+			append1(&spillWorklist, g_node2);
 		}
 		else if (moveRelated(g_node2)){
-			append1(freezeWorklist, g_node2);
+			append1(&freezeWorklist, g_node2);
 		}
 		else{
-			append1(simplifyWorklist, g_node2);
+			append1(&simplifyWorklist, g_node2);
 		}
 		initial = initial->next;
 	}
@@ -440,10 +455,10 @@ static void decrementDegree(G_node2 node){
 		enableMoves(unionSet1(adjacent(node), G_NodeList2(node, NULL, NULL)));
 		delete1(&spillWorklist, node);
 		if (moveRelated(node)){
-			append1(freezeWorklist, node);
+			append1(&freezeWorklist, node);
 		}
 		else{
-			append1(simplifyWorklist, node);
+			append1(&simplifyWorklist, node);
 		}
 	}
 }
@@ -453,7 +468,7 @@ static void enableMoves(G_nodeList2 g_nodeList2){
 		while (live_moveList2 != NULL){
 			if (live_moveList2->value->kind == ACTIVEMOVES){
 				delete2(&activeMoves, live_moveList2->value);
-				append2(worklistMoves, live_moveList2->value);
+				append2(&worklistMoves, live_moveList2->value);
 			}
 			live_moveList2 = live_moveList2->next;
 		}
@@ -462,8 +477,8 @@ static void enableMoves(G_nodeList2 g_nodeList2){
 }
 static void coalesce(){
 	Live_moveList2node  node = peek2(&worklistMoves);
-	G_node2 x = TAB_look(G_nodeMapG_node2, node->move->dst);
-	G_node2 y = TAB_look(G_nodeMapG_node2, node->move->src);
+	G_node2 x = getAlias(TAB_look(G_nodeMapG_node2, node->move->dst));
+	G_node2 y = getAlias(TAB_look(G_nodeMapG_node2, node->move->src));
 	G_node2 u = x;
 	G_node2 v = y;
 	if (isContain1(precolored, y)){
@@ -471,11 +486,11 @@ static void coalesce(){
 		v = x;
 	}
 	if (u == v){
-		append2(coalescedMoves, node);
+		append2(&coalescedMoves, node);
 		addWorkList(u);
 	}
 	else if (isContain1(precolored, v) || isLink(u->node->mykey,v->node->mykey)){
-		append2(constraintMoves, node);
+		append2(&constraintMoves, node);
 		addWorkList(u);
 		addWorkList(v);
 	}
@@ -495,19 +510,19 @@ static void coalesce(){
 			bFlag = FALSE;
 		}
 		if (bFlag || !isContain1(precolored, u) && conservative(unionSet1(adjacent(u), adjacent(v)))){
-			append2(coalescedMoves, node);
+			append2(&coalescedMoves, node);
 			combine(u, v);
 			addWorkList(u);
 		}
 		else{
-			append2(activeMoves, node);
+			append2(&activeMoves, node);
 		}
 	}
 }
 static void addWorkList(G_node2 node){
-	if (isContain1(precolored,node) && !moveRelated(node) && degree[node->node->mykey] < K){
+	if (!isContain1(precolored,node) && !moveRelated(node) && degree[node->node->mykey] < K){
 		delete1(&freezeWorklist, node);
-		append1(simplifyWorklist, node);
+		append1(&simplifyWorklist, node);
 	}
 }
 static bool OK(G_node2 t, G_node2 r){
@@ -530,13 +545,13 @@ static bool getAlias(G_node2 node){
 	else node;
 }
 static void combine(G_node2 u, G_node2 v){
-	if (isContain1(v, freezeWorklist)){
+	if (isContain1(freezeWorklist,v)){
 		delete1(&freezeWorklist, v);
 	}
 	else{
 		delete1(&spillWorklist, v);
 	}
-	append1(coalescedNodes, v);
+	append1(&coalescedNodes, v);
 	TAB_enter(alias, v, u);
 	TAB_enter(moveList,u,unionSet2(TAB_look(moveList, u), TAB_look(moveList, v)));
 	enableMoves(v);
@@ -546,14 +561,14 @@ static void combine(G_node2 u, G_node2 v){
 		decrementDegree(g_nodeList2->value);
 		g_nodeList2 = g_nodeList2->next;
 	}
-	if (degree[u->node->mykey] >= K&&isContain1(u, freezeWorklist)){
+	if (degree[u->node->mykey] >= K&&isContain1(freezeWorklist,u)){
 		delete1(&freezeWorklist, u);
-		append1(spillWorklist, u);
+		append1(&spillWorklist, u);
 	}
 }
 static void freeze(){
 	G_node2 node = peek1(&freezeWorklist);
-	append1(simplifyWorklist, node);
+	append1(&simplifyWorklist, node);
 	freezeMoves(node);
 }
 static void freezeMoves(G_node2 u){
@@ -567,17 +582,17 @@ static void freezeMoves(G_node2 u){
 			v = getAlias(x);
 		}
 		delete2(&activeMoves, m);
-		append2(frozenMoves, m);
+		append2(&frozenMoves, m);
 		if (isEmpty1(NodeMoves(v)) && degree[v->node->mykey] < K){
 			delete2(&freezeWorklist, v);
-			append1(simplifyWorklist, v);
+			append1(&simplifyWorklist, v);
 		}
 		live_moveList2 = live_moveList2->next;
 	}
 }
 static void selectSpill(){
 	G_node2 m = peek1(&spillWorklist);
-	append1(simplifyWorklist, m);
+	append1(&simplifyWorklist, m);
 	freezeMoves(m);
 }
 static G_nodeList2 allReg(){
@@ -597,16 +612,16 @@ static void assignColors(){
 			g_nodeList2->next;
 		}
 		if (isEmpty1(okColors)){
-			append1(spilledNodes, n);
+			append1(&spilledNodes, n);
 		}
 		else{
-			append1(coloredNodes, n);
+			append1(&coloredNodes, n);
 			TAB_enter(color, n, okColors->value);
 		}
 	}
 	G_nodeList2 g_nodeList2 = coalescedMoves;
 	while (g_nodeList2 != NULL){
-		TAB_enter(color, g_nodeList2->value, TAB_look(color, getAlias(g_nodeList2->value));
+		TAB_enter(color, g_nodeList2->value, TAB_look(color, getAlias(g_nodeList2->value)));
 		g_nodeList2 = g_nodeList2->next;
 	}
 }
