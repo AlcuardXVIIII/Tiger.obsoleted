@@ -1,5 +1,9 @@
-a.out: parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o assem.o codegen.o graph.o flowgraph.o liveness.o
-	cc -g parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o assem.o codegen.o graph.o flowgraph.o liveness.o
+a.out: parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o assem.o codegen.o graph.o flowgraph.o liveness.o regalloc.o color.o
+	cc -g parsetest.o y.tab.o lex.yy.o errormsg.o util.o table.o symbol.o absyn.o prabsyn.o semant.o types.o env.o bst.o translate.o frame.o temp.o escape.o tree.o canon.o printtree.o assem.o codegen.o graph.o flowgraph.o liveness.o regalloc.o color.o
+regalloc.o:regalloc.c regalloc.h
+	cc -g -c regalloc.c
+color.o:color.c color.h
+	cc -g -c color.c
 liveness.o:liveness.c liveness.h
 	cc -g -c liveness.c
 flowgraph.o:flowgraph.c flowgraph.h
@@ -60,4 +64,4 @@ util.o: util.c util.h
 	cc -g -c util.c
 
 clean: 
-	rm -f a.out util.o parsetest.o lex.yy.o errormsg.o y.tab.c y.tab.h y.tab.o lex.yy.c y.output table.o absyn.o symbol.o errormsg.o  prabsyn.o env.o types.o semant.o frame.o bst.o translate.o temp.o escape.o tree.o canon.o printtree.o codegen.o assem.o graph.o flowgraph.o liveness.o
+	rm -f a.out util.o parsetest.o lex.yy.o errormsg.o y.tab.c y.tab.h y.tab.o lex.yy.c y.output table.o absyn.o symbol.o errormsg.o  prabsyn.o env.o types.o semant.o frame.o bst.o translate.o temp.o escape.o tree.o canon.o printtree.o codegen.o assem.o graph.o flowgraph.o liveness.o regalloc.o color.o

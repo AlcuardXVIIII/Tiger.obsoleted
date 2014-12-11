@@ -7,7 +7,6 @@
 #include "graph.h"
 #include "flowgraph.h"
 #include "liveness.h"
-#include "color.h"
 #include "tree.h"
 #include "frame.h"
 #include "color.h"
@@ -28,14 +27,13 @@ static Temp_temp getNewTemp(TAB_table table, Temp_temp oldTemp){
 	}
 	return newTemp;
 }
-static Temp_tempList rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il){
+static void rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il){
 	AS_instrList pre = NULL, cur = il;
-	Temp_tempList newTempList = NULL;
 	while (cur != NULL){
 		AS_instr as_Instr = cur->head;
 		switch (as_Instr->kind){
 		case I_OPER:
-		case I_MOVE:
+		case I_MOVE:{
 			Temp_tempList defTempList = as_Instr->u.OPER.dst;
 			Temp_tempList useTempList = as_Instr->u.OPER.src;
 			TAB_table oldMapNew = TAB_empty();
@@ -46,9 +44,6 @@ static Temp_tempList rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_ins
 					needDelete = TRUE;
 					assert(pre);
 					Temp_temp newTemp = getNewTemp(oldMapNew, useTempList->head);
-					if (!inTemp_tempList(newTemp, newTempList)){
-						newTempList = Temp_TempList(newTemp, newTempList);
-					}
 					int offset = getOffset(tempMapOffset,f, newTemp);
 					string instr = string_format("movl (%d),`d0\n", offset);
 					AS_instr as_instr = AS_Move(instr, NULL, Temp_TempList(newTemp,NULL));
@@ -61,9 +56,6 @@ static Temp_tempList rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_ins
 					needDelete = TRUE;
 					assert(pre);
 					Temp_temp newTemp = getNewTemp(oldMapNew, defTempList->head);
-					if (!inTemp_tempList(newTemp, newTempList)){
-						newTempList = Temp_TempList(newTemp, newTempList);
-					}
 					int offset = getOffset(tempMapOffset, f, newTemp);
 					string instr = string_format("movl `s0,(%d)\n", offset);
 					AS_instr as_instr = AS_Move(instr, Temp_TempList(newTemp, NULL), NULL);
@@ -75,22 +67,22 @@ static Temp_tempList rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_ins
 				pre->tail = cur->tail;
 			}
 			break;
+                }
 		default:
 			pre = cur;
 			break;
 		}
 		cur = cur->tail;
 	}
-	return newTempList;
 }
 RA_result RA_regAlloc(F_frame f,AS_instrList il){
   G_graph g_graph = FG_AssemFlowGraph(il);
   Live_graph live_graph = Live_liveness(g_graph);
   Temp_map initial = F_precolored();
   Temp_tempList regs = F_registers();
-  COL_result col_result = COL_color(g_graph,initial,regs);
+  COL_result col_result = COL_color(live_graph,initial,regs);
   if(col_result->spills!=NULL){
-	  Temp_tempList newTempList = rewriteProgram(f, col_result->spills, il);
+	  rewriteProgram(f, col_result->spills, il);
 	  return RA_regAlloc(f,il);
   }
   RA_result ra_result = checked_malloc(sizeof(*ra_result));

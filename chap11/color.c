@@ -6,7 +6,7 @@
 #include "graph.h"
 #include "liveness.h"
 #include "color.h"
-//��㡢���������Ϻ�ջ�����ݽṹ
+
 G_nodeList2 precolored = NULL;
 G_nodeList2 simplifyWorklist = NULL;
 G_nodeList2 freezeWorklist = NULL;
@@ -15,13 +15,13 @@ G_nodeList2 spilledNodes  = NULL;
 G_nodeList2 coalescedNodes = NULL;
 G_nodeList2 coloredNodes = NULL;
 G_nodeList2 selectStack = NULL;
-//����ָ���ϵ����ݽṹ
+
 static Live_moveList2 coalescedMoves = NULL;
 static Live_moveList2 constraintMoves = NULL;
 static Live_moveList2 frozenMoves = NULL;
 static Live_moveList2 worklistMoves = NULL;
 static Live_moveList2 activeMoves = NULL;
-//�������ݽṹ
+
 static int length;
 static int K;
 static int* degree = NULL;
@@ -31,8 +31,6 @@ static TAB_table moveList = NULL;
 static TAB_table alias = NULL;
 static Temp_map color = NULL;
 static TAB_table G_nodeMapG_node2 = NULL;
-//���ݽṹ��ʼ��
-
 
 void initAdjSet(int n){
 	adjSet = checked_malloc(n*n*sizeof(bool));
@@ -80,7 +78,6 @@ G_node2 G_Node2(G_node node){
 	g_node2->kind = DEFAULT1;
 	return g_node2;
 }
-//�����µĽ��
 G_nodeList2 G_NodeList2(G_node2 node,G_nodeList2 pre,G_nodeList2 next){
   G_nodeList2 g_nodeList2 = checked_malloc(sizeof(*g_nodeList2));
   g_nodeList2->value = node;
@@ -101,14 +98,12 @@ Live_moveList2 Live_MoveList2(Live_moveList2node value, Live_moveList2 pre, Live
   live_moveList2->next = next;
   return live_moveList2;
 }
-//�жϼ����Ƿ�Ϊ��
 static bool isEmpty1(G_nodeList2 set){
   return set==NULL;
 }
 static bool isEmpty2(Live_moveList2 set){
   return set==NULL;
 }
-//����һ���µļ��ϣ��˼��ϰ�������1�ͼ���2������Ԫ��
 static G_nodeList2 unionSet1(G_nodeList2 set1,G_nodeList2 set2){
   G_nodeList2 head = NULL,tail = NULL;
   while(set1!=NULL){
@@ -155,7 +150,6 @@ static Live_moveList2 unionSet2(Live_moveList2 set1, Live_moveList2 set2){
 	}
 	return head;
 }
-//�򼯺�������µ�Ԫ��
 static void append1(G_nodeList2* set,G_node2 node){
 	/*
 	 * node<------->(node2<----->node1)==set
@@ -223,7 +217,6 @@ static void append2(Live_moveList2* set, Live_moveList2node node){
 		(*set) = live_moveList2;
 	}
 }
-//�жϼ����Ƿ����ĳԪ��
 static bool isContain1(G_nodeList2 set, G_node2 node){
 
 	if (set == precolored){
@@ -282,7 +275,6 @@ static bool isContain2(Live_moveList2 set, Live_moveList2node node){
 	}
 	return FALSE;
 }
-//����һ���µļ��ϣ��˼����Ǽ���1�ͼ���2�Ĳ
 static G_nodeList2 diffSet1(G_nodeList2 set1,G_nodeList2 set2){
 	G_nodeList2 head = NULL, tail=NULL;
 	while (set1 != NULL){
@@ -315,7 +307,6 @@ static Live_moveList2 diffSet2(Live_moveList2 set1, Live_moveList2 set2){
 	}
 	return head;
 }
-//����һ���µļ��ϣ��˼����Ǽ���1�ͼ���2�Ľ���
 static G_nodeList2 interSet1(G_nodeList2 set1, G_nodeList2 set2){
 	G_nodeList2 head=NULL, tail=NULL;
 	while (set1 != NULL){
@@ -348,7 +339,6 @@ static Live_moveList2 interSet2(Live_moveList2 set1, Live_moveList2 set2){
 	}
 	return head;
 }
-//�Ӽ�����ɾ��ĳ�����
 static void delete1(G_nodeList2* set_, G_node2 node){
 	assert(*set_);
 	G_nodeList2 set = *set_;
@@ -515,7 +505,7 @@ static G_node2 getAlias(G_node2 node){
 	if (isContain1(coalescedNodes, node)){
 		getAlias(TAB_look(alias, node));
 	}
-	else node;
+	else return node;
 }
 static void addWorkList(G_node2 node){
 	if (!isContain1(precolored,node) && !moveRelated(node) && degree[node->node->mykey] < K){
@@ -592,7 +582,7 @@ static void coalesce(){
 		else{
 			bFlag = FALSE;
 		}
-		if (bFlag || !isContain1(precolored, u) && conservative(unionSet1(adjacent(u), adjacent(v)))){
+		if (bFlag || (!isContain1(precolored, u) && conservative(unionSet1(adjacent(u), adjacent(v))))){
 			append2(&coalescedMoves, node);
 			combine(u, v);
 			addWorkList(u);
