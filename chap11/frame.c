@@ -64,22 +64,39 @@ Temp_temp F_ESP(){
   }
   return esp;
 }
-
+Temp_tempList F_registers(){
+	static Temp_tempList registers = NULL;
+	if (registers == NULL){
+		registers = Temp_TempList(F_EAX(),
+			Temp_TempList(F_EBX(),
+			Temp_TempList(F_ECX(),
+			Temp_TempList(F_EDX(),
+			Temp_TempList(F_ESI(),
+			Temp_TempList(F_EDI(),
+			Temp_TempList(F_ESP(),
+			Temp_TempList(F_EBP(), NULL))))))));
+	}
+	return registers;
+}
 Temp_map F_temp2Name(){
   static Temp_map temp2map = NULL;
   if(temp2map==NULL){
     temp2map = Temp_layerMap(Temp_empty(),Temp_name());
-    Temp_enter(temp2map,F_EAX(),"%eax");
-    Temp_enter(temp2map,F_EBX(),"%ebx");
-    Temp_enter(temp2map,F_ECX(),"%ecx");
-    Temp_enter(temp2map,F_EDX(),"%edx");
-    Temp_enter(temp2map,F_ESI(),"%esi");
-    Temp_enter(temp2map,F_EDI(),"%edi");
-    Temp_enter(temp2map,F_ESP(),"%esp");
+	Temp_enter(Temp_name(), F_EAX(), "%eax");
+	Temp_enter(Temp_name(), F_EBX(), "%ebx");
+	Temp_enter(Temp_name(), F_ECX(), "%ecx");
+	Temp_enter(Temp_name(), F_EDX(), "%edx");
+	Temp_enter(Temp_name(), F_ESI(), "%esi");
+	Temp_enter(Temp_name(), F_EDI(), "%edi");
+	Temp_enter(Temp_name(), F_ESP(), "%esp");
+	Temp_enter(Temp_name(), F_EBP(), "%ebp");
   }
   return temp2map;
 }
-
+Temp_map F_precolored(){
+	Temp_map initial = Temp_layerMap(Temp_empty(), Temp_name());
+	return initial;
+}
 Temp_temp F_FP(){
   return F_EBP();
 }

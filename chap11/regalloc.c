@@ -15,17 +15,16 @@
 RA_result RA_regAlloc(F_frame f,AS_instrList il){
   G_graph g_graph = FG_AssemFlowGraph(il);
   Live_graph live_graph = Live_liveness(g_graph);
-  g_graph = live_graph->graph;
-  Live_moveList Live_moveList = live_graph->moves;
+  Temp_map initial = F_precolored();
+  Temp_tempList regs = F_registers();
 
-
-
-
-  Temp_map initial = NULL;
-  Temp_tempList regs = NULL;
   COL_result col_result = COL_color(g_graph,initial,regs);
   if(col_result->spills!=NULL){
-    //TODO
+
+
+
+
+
     il = NULL;
     return RA_regAlloc(f,il);
   }

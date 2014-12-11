@@ -136,19 +136,19 @@ Live_graph Live_liveness(G_graph flow){
     G_node g_node = p->head;
     Temp_tempList defTempList = FG_def(g_node);
     Temp_tempList useTempList = FG_use(g_node);
-    Temp_tempList tempList = differenceSet(useTempList,defTempList);
+	Temp_tempList tempList = lookupLiveMap(g_table_out, g_node);
     if(FG_isMove(g_node)){
-      tempList = differenceSet(defTempList,useTempList);
-      live_moveList = Live_MoveList(getNodeByTemp(Temp2Node,g_graph,defTempList->head),getNodeByTemp(Temp2Node,g_graph,useTempList->head),live_moveList);
+		tempList = differenceSet(tempList, useTempList);
+		live_moveList = Live_MoveList(getNodeByTemp(Temp2Node,g_graph,defTempList->head),getNodeByTemp(Temp2Node,g_graph,useTempList->head),live_moveList);
     }
     while(defTempList!=NULL){
       Temp_temp defTemp = defTempList->head;
       G_node def_node = getNodeByTemp(Temp2Node,g_graph,defTemp);
       while(tempList!=NULL){
-        Temp_temp useTemp = tempList->head;
-        G_node use_node = getNodeByTemp(Temp2Node,g_graph,useTemp);
-        G_addEdge(def_node,use_node);
-        G_addEdge(use_node,def_node);
+        Temp_temp temp_temp = tempList->head;
+		G_node g_node = getNodeByTemp(Temp2Node, g_graph, temp_temp);
+		G_addEdge(def_node, g_node);
+		G_addEdge(g_node, def_node);
         tempList = tempList->tail;
       }
       defTempList = defTempList->tail;

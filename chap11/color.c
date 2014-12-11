@@ -24,20 +24,25 @@ static Live_moveList2 frozenMoves = NULL;
 static Live_moveList2 worklistMoves = NULL;
 static Live_moveList2 activeMoves = NULL;
 //其他数据结构
-static int* degree = NULL;
-static G_nodeList2* adjList = NULL;
 static int length;
 static int K;
+static int* degree = NULL;
+static G_nodeList2* adjList = NULL;
 static bool* adjSet = NULL;
 static TAB_table moveList = NULL;
 static TAB_table alias = NULL;
-static TAB_table color = NULL;
+static Temp_map color = NULL;
 static TAB_table G_nodeMapG_node2 = NULL;
 //数据结构初始化
-void init(){
+void init(int n, Temp_map inital,int k){
+	length = n;
+	K = k;
+	initAdjSet(n);
+	initAdjList(n);
+	initDegree(n);
 	moveList = TAB_empty();
 	alias = TAB_emtpy();
-	color = TAB_empty();
+	color = inital;
 	G_nodeMapG_node2 = TAB_emtpy();
 }
 
@@ -69,6 +74,12 @@ void incDegree(int i){
   degree[i]--;
   assert(degree[i]>=0);
 }
+G_node2 G_Node2(G_node node){
+	G_node2 g_node2 = checked_malloc(sizeof(*g_node2));
+	g_node2->node = node;
+	g_node2->kind = DEFAULT1;
+	return g_node2;
+}
 //创建新的结点
 G_nodeList2 G_NodeList2(G_node2 node,G_nodeList2 pre,G_nodeList2 next){
   G_nodeList2 g_nodeList2 = checked_malloc(sizeof(*g_nodeList2));
@@ -76,6 +87,12 @@ G_nodeList2 G_NodeList2(G_node2 node,G_nodeList2 pre,G_nodeList2 next){
   g_nodeList2->pre = pre;
   g_nodeList2->next = next;
   return g_nodeList2;
+}
+Live_moveList2node Live_MoveList2node(Live_moveList move){
+	Live_moveList2node live_moveList2node = checked_malloc(sizeof(*live_moveList2node));
+	live_moveList2node->move = move;
+	live_moveList2node->kind = DEFAULT2;
+	return live_moveList2node;
 }
 Live_moveList2 Live_MoveList2(Live_moveList2node value, Live_moveList2 pre, Live_moveList2 next){
   Live_moveList2 live_moveList2 = checked_malloc(sizeof(*live_moveList2));
@@ -437,7 +454,7 @@ static void makeWorklist(G_nodeList2 initial){
 static G_nodeList2 adjacent(G_node2 node){
 	return diffSet1(adjList[node->node->mykey], unionSet1(selectStack, coalescedNodes));
 }
-static void Simplify(){
+static void simplify(){
 	if (simplifyWorklist != NULL){
 		G_node2 node = peek1(&simplifyWorklist);
 		push(selectStack, node);
@@ -538,7 +555,7 @@ static bool conservative(G_nodeList2 nodes){
 	}
 	return k < K;
 }
-static bool getAlias(G_node2 node){
+static G_node2 getAlias(G_node2 node){
 	if (isContain1(coalescedNodes, node)){
 		getAlias(TAB_look(alias, node));
 	}
@@ -617,18 +634,83 @@ static void assignColors(){
 		else{
 			append1(&coloredNodes, n);
 			TAB_enter(color, n, okColors->value);
+			Temp_enter(color, n->node->info, Temp_look(color,okColors->value->node->info));
 		}
 	}
 	G_nodeList2 g_nodeList2 = coalescedMoves;
 	while (g_nodeList2 != NULL){
-		TAB_enter(color, g_nodeList2->value, TAB_look(color, getAlias(g_nodeList2->value)));
+		Temp_enter(color, g_nodeList2->value->node->info, Temp_look(color, getAlias(g_nodeList2->value)->node->info));
 		g_nodeList2 = g_nodeList2->next;
 	}
 }
-COL_result COL_color(G_graph ig,Temp_map inital,Temp_tempList regs){
-  COL_result col_result = checked_malloc(sizeof(*col_result));
-  //TODO
+COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
 
+	G_graph graph = ig->graph;
+	Live_moveList moves = ig->moves;
+	G_nodeList g_nodeList = G_nodes(graph);
+	init(graph->nodecount, inital,lengthOfTempList(regs));
+	G_nodeList2 g_nodeList2 = NULL;
+	//initial precolored and G_nodeMapG_node2
+	while (g_nodeList != NULL){
+		G_node g_node = g_nodeList->head;
+		G_node2 g_node2 = G_Node2(g_node);
+		TAB_enter(G_nodeMapG_node2, g_node, g_node2);
+		if (inTemp_tempList(g_node->info,regs)){
+			append1(&precolored, g_node2);
+		}
+		else{
+			append1(&g_nodeList2, g_node2);
+		}
+		g_nodeList = g_nodeList->tail;
+	}
+	g_nodeList = G_nodes(graph);
+	//initial adjSet and adjList
+	while (g_nodeList != NULL){
+		G_node g_node = g_nodeList->head;
+		G_node2 g_node2 = TAB_Look(G_nodeMapG_node2, g_node);
+		G_nodeList g_nodeList = G_adj(g_node);
+		while (g_nodeList != NULL){
+			G_node otherG_node = g_nodeList->head;
+			G_node2 otherG_node2 = TAB_Look(G_nodeMapG_node2, otherG_node);
+			addEdge(g_node2, otherG_node2);
+			g_nodeList = g_nodeList->tail;
+		}
+		g_nodeList = g_nodeList->tail;
+	}
+	//initial moveList
+	while (moves != NULL){
+		Live_moveList2node live_moveList2node = Live_MoveList2node(moves);
+		append2(&worklistMoves, live_moveList2node);
+		G_node2 dst = TAB_look(G_nodeMapG_node2, moves->dst);
+		G_node2 src = TAB_look(G_nodeMapG_node2, moves->src);
+		TAB_enter(moveList, dst, unionSet2(TAB_look(moveList, dst), Live_MoveList2(live_moveList2node,NULL,NULL)));
+		TAB_enter(moveList, src, unionSet2(TAB_look(moveList, src), Live_MoveList2(live_moveList2node, NULL, NULL)));
+		moves = moves->tail;
+	}
 
-  return col_result;
+	makeWorklist(g_nodeList2);
+	do{
+		if (!isEmpty1(simplifyWorklist)){
+			simplify();
+		}
+		else if (!isEmpty2(worklistMoves)){
+			coalesce();
+		}
+		else if (!isEmpty1(freezeWorklist)){
+			freeze();
+		}
+		else{
+			selectSpill();
+		}
+	} while (!isEmpty1(simplifyWorklist)||!isEmpty2(worklistMoves)||!isEmpty1(freezeWorklist)||!isEmpty1(spillWorklist));
+	assignColors();
+	COL_result col_result = checked_malloc(sizeof(*col_result));
+	col_result->coloring = color;
+	Temp_tempList spills = NULL;
+	while (spilledNodes != NULL){
+		spills = Temp_TempList(spilledNodes->value->node->info,spills);
+		spilledNodes = spilledNodes->next;
+	}
+	col_result->spills = spills;
+	return col_result;
 }
