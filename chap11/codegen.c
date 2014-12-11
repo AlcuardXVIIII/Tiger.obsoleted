@@ -68,7 +68,7 @@ static Temp_temp munchExp(T_exp e){
         emit(AS_Move(instr,L(r,NULL),L(temp_temp_t1,NULL)));
       }
     }else if(e->u.MEM->kind==T_CONST){
-      string instr = string_format("movl (%d),`d0\n",e->u.MEM->u.CONST);
+      string instr = string_format("    movl (%d),`d0\n",e->u.MEM->u.CONST);
       emit(AS_Move(instr,L(r,NULL),NULL));
       assert(0);
     }else{

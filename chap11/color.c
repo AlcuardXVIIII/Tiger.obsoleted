@@ -644,7 +644,6 @@ static void assignColors(){
 	}
 }
 COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
-
 	G_graph graph = ig->graph;
 	Live_moveList moves = ig->moves;
 	G_nodeList g_nodeList = G_nodes(graph);
@@ -677,7 +676,7 @@ COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
 		}
 		g_nodeList = g_nodeList->tail;
 	}
-	//initial moveList
+	//initial moveList and worklistMoves
 	while (moves != NULL){
 		Live_moveList2node live_moveList2node = Live_MoveList2node(moves);
 		append2(&worklistMoves, live_moveList2node);
