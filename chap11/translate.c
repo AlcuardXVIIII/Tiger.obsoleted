@@ -288,7 +288,6 @@ Tr_exp Tr_relExp(A_oper oper,Tr_exp left,Tr_exp right){
   return Tr_Cx(patTr,patFa,t_stm);
 }
 Tr_exp Tr_ifExp(Tr_exp test,Tr_exp thenn,Tr_exp elsee){
-
   if(test==NULL||thenn==NULL)
     return NULL;
   Temp_label t_label = Temp_newlabel();

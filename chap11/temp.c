@@ -6,8 +6,6 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "util.h"
 #include "symbol.h"
 #include "temp.h"
@@ -44,10 +42,7 @@ Temp_temp Temp_newtemp(void)
  return p;
 }
 
-
-
 struct Temp_map_ {TAB_table tab; Temp_map under;};
-
 
 Temp_map Temp_name(void) {
  static Temp_map m = NULL;
@@ -110,4 +105,21 @@ void Temp_dumpMap(FILE *out, Temp_map m) {
      fprintf(out,"---------\n");
      Temp_dumpMap(out,m->under);
   }
+}
+bool inTemp_tempList(Temp_temp temp, Temp_tempList list){
+	while (list != NULL){
+		if (temp == list->head){
+			return TRUE;
+		}
+		list = list->tail;
+	}
+	return FALSE;
+}
+int lengthOfTempList(Temp_tempList tempList){
+	int count = 0;
+	while (tempList != NULL){
+		tempList = tempList->tail;
+		count++;
+	}
+	return count;
 }
