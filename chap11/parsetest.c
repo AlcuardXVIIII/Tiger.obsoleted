@@ -22,6 +22,8 @@
 #include "graph.h"
 #include "flowgraph.h"
 #include "liveness.h"
+#include "color.h"
+#include "regalloc.h"
 
 extern int yyparse(void);
 extern A_exp absyn_root;
@@ -49,16 +51,12 @@ void SEM_transProg(A_exp exp){
       T_stmList t_stmList = C_linearize(f_frag->u.proc.body);
       struct C_block block = C_basicBlocks(t_stmList);
       t_stmList = C_traceSchedule(block);
-      //      printStmList(stdout,t_stmList);
-      AS_instrList as_instrList = F_codegen(f_frag->u.proc.frame,t_stmList);
-      AS_printInstrList(stdout,as_instrList,F_temp2Name());
-      //new
-
-      G_graph g_graph = FG_AssemFlowGraph(as_instrList);
-      //      Live_graph live_graph = Live_liveness(g_graph);
-
-
-      //new
+      //printStmList(stdout,t_stmList);
+      F_frame f = f_frag->u.proc.frame;
+      AS_instrList as_instrList = F_codegen(f,t_stmList);
+      //      AS_printInstrList(stdout,as_instrList,F_temp2Name());
+      RA_result ra_result = RA_regAlloc(f,as_instrList);
+      AS_printInstrList(stdout,ra_result->il,ra_result->coloring);
     }
     else{
       fprintf(stdout,"%s:\n    .string %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);
@@ -77,6 +75,6 @@ int main(int argc, char **argv) {
  Esc_findEscape(exp);
  //pr_exp(stdout,exp,4);
  // fprintf(stdout,"\n");
- SEM_transProg(exp);
- return 0;
+   SEM_transProg(exp);
+   return 0;
 }

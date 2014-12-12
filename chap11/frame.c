@@ -94,8 +94,16 @@ Temp_map F_temp2Name(){
   return temp2map;
 }
 Temp_map F_precolored(){
-	Temp_map initial = Temp_layerMap(Temp_empty(), Temp_name());
-	return initial;
+  Temp_map initial = Temp_empty();
+  	Temp_enter(initial, F_EAX(), "%eax");
+	Temp_enter(initial, F_EBX(), "%ebx");
+	Temp_enter(initial, F_ECX(), "%ecx");
+	Temp_enter(initial, F_EDX(), "%edx");
+	Temp_enter(initial, F_ESI(), "%esi");
+	Temp_enter(initial, F_EDI(), "%edi");
+	Temp_enter(initial, F_ESP(), "%esp");
+	Temp_enter(initial, F_EBP(), "%ebp");
+  return initial;
 }
 Temp_temp F_FP(){
   return F_EBP();

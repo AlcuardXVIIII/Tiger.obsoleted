@@ -14,6 +14,9 @@ Temp_tempList FG_def(G_node n){
   assert(as_instr);
   switch(as_instr->kind){
   case I_OPER:
+    if(as_instr->u.OPER.jumps!=NULL){
+      return NULL;
+    }
     return as_instr->u.OPER.dst;
   case I_LABEL:
     return NULL;
@@ -28,6 +31,9 @@ Temp_tempList FG_use(G_node n){
   assert(as_instr);
   switch(as_instr->kind){
   case I_OPER:
+    if(as_instr->u.OPER.jumps!=NULL){
+      return NULL;
+    }
     return as_instr->u.OPER.src;
   case I_LABEL:
     return NULL;

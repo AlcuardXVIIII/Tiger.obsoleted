@@ -21,10 +21,10 @@ static int setSize(Temp_tempList temp_tempList){
   for(;temp_tempList;temp_tempList=temp_tempList->tail)size++;
   return size;
 }
-static Temp_tempList differenceSet(Temp_tempList set1,Temp_tempList set2){
-  Temp_tempList re_head = NULL,re_tail = NULL;
+static Temp_tempList differenceSet(Temp_tempList set1_,Temp_tempList set2_){
+  Temp_tempList re_head = NULL,re_tail = NULL,set1=set1_;
   while(set1!=NULL){
-    if(!isMember(set2,set1->head)){
+    if(!isMember(set2_,set1->head)){
       Temp_tempList temp = Temp_TempList(set1->head,NULL);
       if(re_tail==NULL){
         re_head = re_tail = temp;
@@ -37,8 +37,8 @@ static Temp_tempList differenceSet(Temp_tempList set1,Temp_tempList set2){
   }
   return re_head;
 }
-static Temp_tempList unionSet(Temp_tempList set1,Temp_tempList set2){
-  Temp_tempList re_head = NULL,re_tail = NULL;
+static Temp_tempList unionSet(Temp_tempList set1_,Temp_tempList set2_){
+  Temp_tempList re_head = NULL,re_tail = NULL,set1 = set1_,set2=set2_;
   while(set1!=NULL){
     Temp_tempList temp = Temp_TempList(set1->head,NULL);
     if(re_tail==NULL){
@@ -50,7 +50,7 @@ static Temp_tempList unionSet(Temp_tempList set1,Temp_tempList set2){
   }
   while(set2!=NULL){
     Temp_tempList temp = Temp_TempList(set2->head,NULL);
-    if(!isMember(set1,set2->head)){
+    if(!isMember(set1_,set2->head)){
       if(re_tail == NULL){
         re_head = re_tail = temp;
       }else{

@@ -27,6 +27,7 @@ F_frame F_newFrame(Temp_label name,U_boolList formals);
 F_access F_allocLocal(F_frame f,bool escape);
 Temp_temp F_FP();
 Temp_temp F_RV();
+Temp_temp F_EBP();
 extern const int F_wordSize;
 T_exp F_Exp(F_access f_access,T_exp framePtr);
 T_exp F_externalCall(string s,T_expList args);

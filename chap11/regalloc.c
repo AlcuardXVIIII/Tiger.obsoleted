@@ -16,7 +16,7 @@ static int getOffset(TAB_table table,F_frame f,Temp_temp temp){
 	if (f_access == NULL){
 		f_access = F_allocLocal(f, TRUE);
 		TAB_enter(table, temp, f_access);
-	} 
+	}
 	return f_access->u.offset*F_wordSize;
 }
 static Temp_temp getNewTemp(TAB_table table, Temp_temp oldTemp){
@@ -31,50 +31,75 @@ static void rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il
 	AS_instrList pre = NULL, cur = il;
 	while (cur != NULL){
 		AS_instr as_Instr = cur->head;
+                Temp_tempList defTempList = NULL;
+                Temp_tempList useTempList = NULL;
 		switch (as_Instr->kind){
 		case I_OPER:
-		case I_MOVE:{
-			Temp_tempList defTempList = as_Instr->u.OPER.dst;
-			Temp_tempList useTempList = as_Instr->u.OPER.src;
+                  defTempList = as_Instr->u.OPER.dst;
+                  useTempList = as_Instr->u.OPER.src;
+                  break;
+		case I_MOVE:
+                  defTempList = as_Instr->u.MOVE.dst;
+                  useTempList = as_Instr->u.MOVE.src;
+                  break;
+                default:
+                  break;
+                }
+                if(useTempList!=NULL||defTempList!=NULL){
 			TAB_table oldMapNew = TAB_empty();
 			TAB_table tempMapOffset = TAB_empty();
-			bool needDelete = FALSE;
 			while (useTempList != NULL){
 				if (inTemp_tempList(useTempList->head, temp_tempList)){
-					needDelete = TRUE;
 					assert(pre);
 					Temp_temp newTemp = getNewTemp(oldMapNew, useTempList->head);
 					int offset = getOffset(tempMapOffset,f, newTemp);
-					string instr = string_format("movl (%d),`d0\n", offset);
-					AS_instr as_instr = AS_Move(instr, NULL, Temp_TempList(newTemp,NULL));
-					pre = pre->tail = AS_InstrList(as_instr,cur);
+					string instr = string_format("    movl %d(`s0),`d0\n", offset);
+					AS_instr as_instr = AS_Move(instr, Temp_TempList(newTemp,NULL),Temp_TempList(F_EBP(),NULL));
+                                        useTempList->head = newTemp;
+                                        pre = pre->tail = AS_InstrList(as_instr,cur);
 				}
 				useTempList = useTempList->tail;
 			}
 			while (defTempList != NULL){
 				if (inTemp_tempList(defTempList->head, temp_tempList)){
-					needDelete = TRUE;
 					assert(pre);
 					Temp_temp newTemp = getNewTemp(oldMapNew, defTempList->head);
 					int offset = getOffset(tempMapOffset, f, newTemp);
-					string instr = string_format("movl `s0,(%d)\n", offset);
-					AS_instr as_instr = AS_Move(instr, Temp_TempList(newTemp, NULL), NULL);
+					string instr = string_format("    movl `s0,%d(`s1)\n", offset);
+					AS_instr as_instr = AS_Move(instr,NULL, Temp_TempList(newTemp,Temp_TempList(F_EBP(),NULL)));
 					cur->tail = AS_InstrList(as_instr, cur->tail);
+                                        defTempList->head = newTemp;
 				}
 				defTempList = defTempList->tail;
 			}
-			if (needDelete){
-				pre->tail = cur->tail;
-			}
-			break;
                 }
-		default:
-			pre = cur;
-			break;
-		}
-		cur = cur->tail;
+                pre = cur;
+                cur = cur->tail;
 	}
 }
+/*static void removeRedundantMoves(Temp_map m,AS_instrList il){
+  AS_instrList pre = NULL;
+  while(il!=NULL){
+    AS_instr as_instr = il->head;
+    if(as_instr->kind==I_MOVE){
+      Temp_tempList dst = as_instr->u.MOVE.dst;
+      Temp_tempList src = as_instr->u.MOVE.src;
+      if(dst!=NULL&&src!=NULL&&dst->tail==NULL&&src->tail==NULL){
+        string temp1 = Temp_look(m,dst->head);
+        string temp2 = Temp_look(m,src->head);
+        assert(temp1&&temp2);
+        if(temp1==temp2????????????){
+          assert(pre);
+          pre->tail = il->tail;
+          il = il->tail;
+          continue;
+        }
+      }
+    }
+    pre = il;
+    il = il->tail;
+  }
+  }*/
 RA_result RA_regAlloc(F_frame f,AS_instrList il){
   G_graph g_graph = FG_AssemFlowGraph(il);
   Live_graph live_graph = Live_liveness(g_graph);
@@ -87,6 +112,7 @@ RA_result RA_regAlloc(F_frame f,AS_instrList il){
   }
   RA_result ra_result = checked_malloc(sizeof(*ra_result));
   ra_result->coloring = col_result->coloring;
+  //  removeRedundantMoves(ra_result->coloring,il);
   ra_result->il = il;
   return ra_result;
 }
