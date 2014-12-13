@@ -57,6 +57,19 @@ void initDegree(int n){
 	}
 }
 void init(int n, Temp_map inital,int k){
+        precolored = NULL;
+        simplifyWorklist = NULL;
+        freezeWorklist = NULL;
+        spillWorklist = NULL;
+        spilledNodes  = NULL;
+        coalescedNodes = NULL;
+        coloredNodes = NULL;
+        selectStack = NULL;
+        coalescedMoves = NULL;
+        constraintMoves = NULL;
+        frozenMoves = NULL;
+        worklistMoves = NULL;
+        activeMoves = NULL;
 	length = n;
 	K = k;
 	initAdjSet(n);
@@ -660,14 +673,12 @@ COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
 	G_nodeList g_nodeList = G_nodes(graph);
 	init(graph->nodecount, inital,lengthOfTempList(regs));
 	G_nodeList2 g_nodeList2 = NULL;
-	//initial precolored and G_nodeMapG_node2
 	while (g_nodeList != NULL){
 		G_node g_node = g_nodeList->head;
-		G_node2 g_node2 = G_Node2(g_node);
+                G_node2 g_node2 = G_Node2(g_node);
 		if (Temp_look(inital,g_node->info)!=NULL){
-			append1(&precolored, g_node2);
-		}
-		else{
+                  append1(&precolored,g_node2);
+                }else{
 			append1(&g_nodeList2, g_node2);
 		}
 		g_nodeList = g_nodeList->tail;

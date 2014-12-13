@@ -30,6 +30,7 @@ static Temp_temp getNewTemp(TAB_table table, Temp_temp oldTemp){
 }
 static void rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il){
 	AS_instrList pre = NULL, cur = il;
+        TAB_table tempMapOffset = TAB_empty();
 	while (cur != NULL){
 		AS_instr as_Instr = cur->head;
                 Temp_tempList defTempList = NULL;
@@ -48,13 +49,12 @@ static void rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il
                 }
                 if(useTempList!=NULL||defTempList!=NULL){
 			TAB_table oldMapNew = TAB_empty();
-			TAB_table tempMapOffset = TAB_empty();
 			while (useTempList != NULL){
 				if (inTemp_tempList(useTempList->head, temp_tempList)){
 					assert(pre);
 					Temp_temp newTemp = getNewTemp(oldMapNew, useTempList->head);
-					int offset = getOffset(tempMapOffset,f, newTemp);
-					string instr = string_format("    movl %d(`s0),`d0\n", offset);
+					int offset = getOffset(tempMapOffset,f,useTempList->head);
+					string instr = string_format("    ++movl %d(`s0),`d0\n", offset);
 					AS_instr as_instr = AS_Move(instr, Temp_TempList(newTemp,NULL),Temp_TempList(F_EBP(),NULL));
                                         useTempList->head = newTemp;
                                         pre = pre->tail = AS_InstrList(as_instr,cur);
@@ -65,8 +65,8 @@ static void rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il
 				if (inTemp_tempList(defTempList->head, temp_tempList)){
 					assert(pre);
 					Temp_temp newTemp = getNewTemp(oldMapNew, defTempList->head);
-					int offset = getOffset(tempMapOffset, f, newTemp);
-					string instr = string_format("    movl `s0,%d(`s1)\n", offset);
+					int offset = getOffset(tempMapOffset, f, defTempList->head);
+					string instr = string_format("    --movl `s0,%d(`s1)\n", offset);
 					AS_instr as_instr = AS_Move(instr,NULL, Temp_TempList(newTemp,Temp_TempList(F_EBP(),NULL)));
 					cur->tail = AS_InstrList(as_instr, cur->tail);
                                         defTempList->head = newTemp;
@@ -105,8 +105,10 @@ RA_result RA_regAlloc(F_frame f,AS_instrList il){
   Temp_map initial = F_precolored();
   Temp_tempList regs = F_registers();
   COL_result col_result = COL_color(live_graph,initial,regs);
+  int i = 0;
   if(col_result->spills!=NULL){
 	  rewriteProgram(f, col_result->spills, il);
+          //          AS_printInstrList(stdout,il,F_temp2Name());
  	  return RA_regAlloc(f,il);
   }
   RA_result ra_result = checked_malloc(sizeof(*ra_result));

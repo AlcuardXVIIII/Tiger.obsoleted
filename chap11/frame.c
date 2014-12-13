@@ -242,17 +242,18 @@ AS_instrList prologue(F_frame f,AS_instrList as_instrList){
 }
 AS_instrList epilogue(F_frame f,AS_instrList as_instrList){
   assert(as_instrList&&as_instrList->head->kind==I_LABEL);
-
   string instr_4 = string_format("    movl `s0,`d0\n");
   string instr_5 = string_format("    popl `d0\n");
   string instr_6 = string_format("    ret\n");
+  AS_instr as_instr_3 = AS_Oper("",NULL,F_callee_saves(),NULL);
   AS_instr as_instr_4 = AS_Move(instr_4,Temp_TempList(F_ESP(),NULL),Temp_TempList(F_EBP(),NULL));
   AS_instr as_instr_5 = AS_Oper(instr_5,Temp_TempList(F_EBP(),NULL),NULL,NULL);
-  AS_instr as_instr_6 = AS_Oper(instr_6,NULL,F_callee_saves(),NULL);
+  AS_instr as_instr_6 = AS_Oper(instr_6,F_registers(),NULL,NULL);
   AS_instrListAppend(as_instrList,
-                     AS_InstrList(as_instr_4,
-                                  AS_InstrList(as_instr_5,
-                                                AS_InstrList(as_instr_6,NULL))));
+                     AS_InstrList(as_instr_3,
+                                  AS_InstrList(as_instr_4,
+                                               AS_InstrList(as_instr_5,
+                                                            AS_InstrList(as_instr_6,NULL)))));
   return as_instrList;
 
 }
