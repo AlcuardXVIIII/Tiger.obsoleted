@@ -1,9 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 #include "util.h"
 #include "symbol.h"
 #include "table.h"
 #include "temp.h"
 #include "assem.h"
+#include "tree.h"
+#include "frame.h"
 #include "graph.h"
 #include "flowgraph.h"
 #include "liveness.h"
@@ -136,20 +139,21 @@ Live_graph Live_liveness(G_graph flow){
     G_node g_node = p->head;
     Temp_tempList defTempList = FG_def(g_node);
     Temp_tempList useTempList = FG_use(g_node);
-	Temp_tempList tempList = lookupLiveMap(g_table_out, g_node);
+    Temp_tempList tempList = lookupLiveMap(g_table_in, g_node);
+    AS_instr tmp_instr = g_node->info;
     if(FG_isMove(g_node)){
-		tempList = differenceSet(tempList, useTempList);
-		live_moveList = Live_MoveList(getNodeByTemp(Temp2Node,g_graph,defTempList->head),getNodeByTemp(Temp2Node,g_graph,useTempList->head),live_moveList);
-                assert(live_moveList->src&&live_moveList->dst);
+      tempList = differenceSet(tempList, useTempList);
+      live_moveList = Live_MoveList(getNodeByTemp(Temp2Node,g_graph,defTempList->head),getNodeByTemp(Temp2Node,g_graph,useTempList->head),live_moveList);
+      assert(live_moveList->src&&live_moveList->dst);
     }
     while(defTempList!=NULL){
       Temp_temp defTemp = defTempList->head;
       G_node def_node = getNodeByTemp(Temp2Node,g_graph,defTemp);
       while(tempList!=NULL){
         Temp_temp temp_temp = tempList->head;
-		G_node g_node = getNodeByTemp(Temp2Node, g_graph, temp_temp);
-		G_addEdge(def_node, g_node);
-		G_addEdge(g_node, def_node);
+        G_node g_node = getNodeByTemp(Temp2Node, g_graph, temp_temp);
+        G_addEdge(def_node, g_node);
+        G_addEdge(g_node, def_node);
         tempList = tempList->tail;
       }
       defTempList = defTempList->tail;
