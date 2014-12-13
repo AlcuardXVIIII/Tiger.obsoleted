@@ -86,7 +86,6 @@ static void format(char *result, string assem,
 		   AS_targets jumps, Temp_map m){
   char *p;
   int i = 0; /* offset to result string */
-  //  printf("```````````%s",assem);
   for(p = assem; p && *p != '\0'; p++)
     if (*p == '`'){
       switch(*(++p)) {

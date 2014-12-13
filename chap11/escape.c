@@ -71,10 +71,8 @@ static void traverseExp(S_table env,int depth,A_exp a){
     break;
   }
   case A_assignExp:{
-    //    printf("++++\n");
     traverseVar(env,depth,a->u.assign.var);
     traverseExp(env,depth,a->u.assign.exp);
-    //    printf("====\n");
     break;
 
   }

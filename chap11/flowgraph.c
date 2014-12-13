@@ -31,7 +31,7 @@ Temp_tempList FG_use(G_node n){
   assert(as_instr);
   switch(as_instr->kind){
   case I_OPER:
-    if(as_instr->u.OPER.jumps!=NULL){
+    if(as_instr->u.OPER.jumps!=NULL||strcmp(as_instr->u.OPER.assem,"    call `s0\n")==0){
       return NULL;
     }
     return as_instr->u.OPER.src;
@@ -46,8 +46,9 @@ Temp_tempList FG_use(G_node n){
 bool FG_isMove(G_node n){
   AS_instr as_instr = G_nodeInfo(n);
   assert(as_instr);
-  if(as_instr->kind==I_MOVE&&strcmp(as_instr->u.MOVE.assem,"    movl `s0,`d0\n")==0)
+  if(as_instr->kind==I_MOVE&&strcmp(as_instr->u.MOVE.assem,"    movl `s0,`d0\n")==0){
     return TRUE;
+  }
   return FALSE;
 }
 G_graph FG_AssemFlowGraph(AS_instrList il){

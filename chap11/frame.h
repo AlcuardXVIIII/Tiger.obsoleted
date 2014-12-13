@@ -56,5 +56,6 @@ Temp_map F_temp2Name();
 Temp_map F_precolored();
 Temp_tempList F_callee_saves();
 Temp_tempList F_caller_saves();
-AS_instrList procEntryExit(F_frame f,AS_instrList as_instrList);
+AS_instrList prologue(F_frame f,AS_instrList as_instrList);
+AS_instrList epilogue(F_frame f,AS_instrList as_instrList);
 Temp_tempList F_registers();

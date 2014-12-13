@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "util.h"
 #include "symbol.h"
 #include "temp.h"
@@ -77,29 +78,27 @@ static void rewriteProgram(F_frame f,Temp_tempList temp_tempList,AS_instrList il
                 cur = cur->tail;
 	}
 }
-/*static void removeRedundantMoves(Temp_map m,AS_instrList il){
+static void removeRedundantMoves(Temp_map m,AS_instrList il){
   AS_instrList pre = NULL;
   while(il!=NULL){
     AS_instr as_instr = il->head;
-    if(as_instr->kind==I_MOVE){
+    if(as_instr->kind==I_MOVE&&strcmp(as_instr->u.MOVE.assem,"    movl `s0,`d0\n")==0){
       Temp_tempList dst = as_instr->u.MOVE.dst;
       Temp_tempList src = as_instr->u.MOVE.src;
-      if(dst!=NULL&&src!=NULL&&dst->tail==NULL&&src->tail==NULL){
-        string temp1 = Temp_look(m,dst->head);
-        string temp2 = Temp_look(m,src->head);
-        assert(temp1&&temp2);
-        if(temp1==temp2????????????){
-          assert(pre);
-          pre->tail = il->tail;
-          il = il->tail;
-          continue;
-        }
+      string temp1 = Temp_look(m,dst->head);
+      string temp2 = Temp_look(m,src->head);
+      assert(temp1&&temp2);
+      if(temp1==temp2){
+        assert(pre);
+        pre->tail = il->tail;
+        il = il->tail;
+        continue;
       }
     }
     pre = il;
     il = il->tail;
   }
-  }*/
+}
 RA_result RA_regAlloc(F_frame f,AS_instrList il){
   G_graph g_graph = FG_AssemFlowGraph(il);
   Live_graph live_graph = Live_liveness(g_graph);
@@ -108,11 +107,11 @@ RA_result RA_regAlloc(F_frame f,AS_instrList il){
   COL_result col_result = COL_color(live_graph,initial,regs);
   if(col_result->spills!=NULL){
 	  rewriteProgram(f, col_result->spills, il);
-	  return RA_regAlloc(f,il);
+ 	  return RA_regAlloc(f,il);
   }
   RA_result ra_result = checked_malloc(sizeof(*ra_result));
   ra_result->coloring = col_result->coloring;
-  //  removeRedundantMoves(ra_result->coloring,il);
+  removeRedundantMoves(ra_result->coloring,il);
   ra_result->il = il;
   return ra_result;
 }

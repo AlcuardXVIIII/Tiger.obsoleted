@@ -101,8 +101,8 @@ Temp_map F_precolored(){
 	Temp_enter(initial, F_EDX(), "%edx");
 	Temp_enter(initial, F_ESI(), "%esi");
 	Temp_enter(initial, F_EDI(), "%edi");
-	Temp_enter(initial, F_ESP(), "%esp");
-	Temp_enter(initial, F_EBP(), "%ebp");
+        Temp_enter(initial, F_EBP(), "%ebp");
+        Temp_enter(initial, F_ESP(), "%esp");
   return initial;
 }
 Temp_temp F_FP(){
@@ -119,7 +119,7 @@ Temp_temp F_RV(){
 Temp_tempList F_callee_saves(){
   static Temp_tempList temp_tempList = NULL;
   if(temp_tempList==NULL){
-    temp_tempList = Temp_TempList(F_EAX(),Temp_TempList(F_EBX(),Temp_TempList(F_ECX(),Temp_TempList(F_EDI(),Temp_TempList(F_ESI(),NULL)))));
+    temp_tempList = Temp_TempList(F_ESP(),Temp_TempList(F_EBP(),NULL));
   }
   return temp_tempList;
 }
@@ -179,7 +179,6 @@ F_access F_allocLocal(F_frame f,bool escape){
   return f_access;
 }
 
-
 const int F_wordSize = 4;
 
 T_exp F_Exp(F_access f_access,T_exp framePtr){
@@ -220,28 +219,40 @@ void AS_instrListAppend(AS_instrList as_instrList1,AS_instrList as_instrList2){
   while(p->tail!=NULL){p=p->tail;}
   p->tail = as_instrList2;
 }
-AS_instrList procEntryExit(F_frame f,AS_instrList as_instrList){
+AS_instrList prologue(F_frame f,AS_instrList as_instrList){
   assert(as_instrList&&as_instrList->head->kind==I_LABEL);
   AS_instr as_instr_0 = as_instrList->head;
   as_instrList = as_instrList->tail;
   string instr_1 = string_format("    pushl `s0\n");
   string instr_2 = string_format("    movl `s0,`d0\n");
   string instr_3 = string_format("    subl $%d,`s0\n",-f->max_offset*F_wordSize);
-  string instr_4 = string_format("    movl `s0,`d0\n");
-  string instr_5 = string_format("    popl `d0\n");
-  string instr_6 = string_format("    ret\n");
   AS_instr as_instr_1 = AS_Oper(instr_1,NULL,Temp_TempList(F_EBP(),NULL),NULL);
   AS_instr as_instr_2 = AS_Move(instr_2,Temp_TempList(F_EBP(),NULL),Temp_TempList(F_ESP(),NULL));
   AS_instr as_instr_3 = AS_Oper(instr_3,NULL,Temp_TempList(F_ESP(),NULL),NULL);
+  if(f->max_offset!=0){
+    return AS_InstrList(as_instr_0,
+                        AS_InstrList(as_instr_1,
+                                     AS_InstrList(as_instr_2,
+                                                  AS_InstrList(as_instr_3,as_instrList))));
+  }else{
+    return AS_InstrList(as_instr_0,
+                        AS_InstrList(as_instr_1,
+                                     AS_InstrList(as_instr_2,as_instrList)));
+  }
+}
+AS_instrList epilogue(F_frame f,AS_instrList as_instrList){
+  assert(as_instrList&&as_instrList->head->kind==I_LABEL);
+
+  string instr_4 = string_format("    movl `s0,`d0\n");
+  string instr_5 = string_format("    popl `d0\n");
+  string instr_6 = string_format("    ret\n");
   AS_instr as_instr_4 = AS_Move(instr_4,Temp_TempList(F_ESP(),NULL),Temp_TempList(F_EBP(),NULL));
   AS_instr as_instr_5 = AS_Oper(instr_5,Temp_TempList(F_EBP(),NULL),NULL,NULL);
-  AS_instr as_instr_6 = AS_Oper(instr_6,NULL,NULL,NULL);
+  AS_instr as_instr_6 = AS_Oper(instr_6,NULL,F_callee_saves(),NULL);
   AS_instrListAppend(as_instrList,
                      AS_InstrList(as_instr_4,
                                   AS_InstrList(as_instr_5,
-                                               AS_InstrList(as_instr_6,NULL))));
-  return AS_InstrList(as_instr_0,
-                      AS_InstrList(as_instr_1,
-                                   AS_InstrList(as_instr_2,
-                                                AS_InstrList(as_instr_3,as_instrList))));
+                                                AS_InstrList(as_instr_6,NULL))));
+  return as_instrList;
+
 }

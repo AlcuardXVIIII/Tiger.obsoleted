@@ -30,7 +30,7 @@ AS_instrList F_codegen(F_frame f,T_stmList stmList){
   }
   list = iList;
   iList = last = NULL;
-  return procEntryExit(f,list);
+  return epilogue(f,list);
 }
 
 static Temp_tempList munchArgs(int n,T_expList t_expList){

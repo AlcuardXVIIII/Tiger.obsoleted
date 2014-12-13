@@ -11,3 +11,4 @@ struct Live_graph_{
 };
 Temp_temp Live_gtemp(G_node n);
 Live_graph Live_liveness(G_graph flow);
+bool isMoveInstr(Live_moveList);
