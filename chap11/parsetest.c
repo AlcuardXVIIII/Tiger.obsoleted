@@ -54,9 +54,10 @@ void SEM_transProg(A_exp exp){
       //printStmList(stdout,t_stmList);
       F_frame f = f_frag->u.proc.frame;
       AS_instrList as_instrList = F_codegen(f,t_stmList);
-      //      AS_printInstrList(stdout,as_instrList,F_temp2Name());
+      //AS_printInstrList(stdout,as_instrList,F_temp2Name());
       RA_result ra_result = RA_regAlloc(f,as_instrList);
-      AS_printInstrList(stdout,ra_result->il,ra_result->coloring);
+      as_instrList =  prologue(f,ra_result->il);
+      AS_printInstrList(stdout,as_instrList,ra_result->coloring);
     }
     else{
       fprintf(stdout,"%s:\n    .string %s\n",Temp_labelstring(f_frag->u.stringg.label),f_frag->u.stringg.str);

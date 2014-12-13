@@ -373,12 +373,10 @@ static void delete3(Stringlist * set_, string node){
 	}
 }
 static G_node2 peek1(G_nodeList2* set){
-	if (*set != NULL){
-          G_node2 node = (*set)->value;
-		delete1(set, node);
-		return node;
-	}
-	return NULL;
+  assert(*set);
+  G_node2 node = (*set)->value;
+  delete1(set, node);
+  return node;
 }
 static G_node2 pop1(G_nodeList2* stack){
 	return peek1(stack);
@@ -633,6 +631,9 @@ static void assignColors(){
 			G_node2 w = g_nodeList2->value;
                         getAlias(w);
                         G_nodeList2 tempNodeList = unionSet1(coloredNodes,precolored);
+                        if(isEmpty3(okColors)){
+                          break;
+                        }
 			if (isContain1(&tempNodeList,getAlias(w))){
 				string strColor = Temp_look(color, getAlias(w)->node->info);
 				delete3(&okColors, strColor);
@@ -677,6 +678,7 @@ COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
 		G_node g_node = g_nodeList->head;
 		G_node2 g_node2 = TAB_look(G_nodeMapG_node2, g_node);
 		G_nodeList adjNodeList = G_adj(g_node);
+
 		while (adjNodeList != NULL){
 			G_node otherG_node = adjNodeList->head;
 			G_node2 otherG_node2 = TAB_look(G_nodeMapG_node2, otherG_node);
@@ -688,10 +690,8 @@ COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
 	//initial moveList and worklistMoves
 	while (moves != NULL){
           Live_moveList2node live_moveList2node = NULL;
-          if(moves->dst==NULL||moves->src==NULL){
-            moves = moves->tail;
-            continue;
-          }
+          assert(moves->dst!=NULL&&moves->src!=NULL);
+
           live_moveList2node = Live_MoveList2node(moves);
           append2(&worklistMoves, live_moveList2node);
           G_node2 dst = TAB_look(G_nodeMapG_node2, moves->dst);

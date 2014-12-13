@@ -99,7 +99,7 @@ Live_graph Live_liveness(G_graph flow){
    */
   Live_graph live_graph = checked_malloc(sizeof(*live_graph));
   G_graph g_graph = G_Graph();
-  Live_moveList live_moveList = checked_malloc(sizeof(*live_moveList));
+  Live_moveList live_moveList = NULL;
   live_graph->graph = g_graph;
   live_graph->moves = live_moveList;
 
@@ -140,6 +140,7 @@ Live_graph Live_liveness(G_graph flow){
     if(FG_isMove(g_node)){
 		tempList = differenceSet(tempList, useTempList);
 		live_moveList = Live_MoveList(getNodeByTemp(Temp2Node,g_graph,defTempList->head),getNodeByTemp(Temp2Node,g_graph,useTempList->head),live_moveList);
+                assert(live_moveList->src&&live_moveList->dst);
     }
     while(defTempList!=NULL){
       Temp_temp defTemp = defTempList->head;
