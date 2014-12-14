@@ -89,7 +89,7 @@ static Temp_temp munchExp(T_exp e){
     break;
   }
   case T_NAME:{
-    Temp_enter(F_temp2Name(),r,Temp_labelstring(e->u.NAME));
+    Temp_enter(F_precolored(),r,Temp_labelstring(e->u.NAME));
     break;
   }
   case T_TEMP:{

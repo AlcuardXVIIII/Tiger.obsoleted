@@ -10,14 +10,14 @@
 #include "liveness.h"
 #include "color.h"
 
-G_nodeList2 precolored = NULL;
-G_nodeList2 simplifyWorklist = NULL;
-G_nodeList2 freezeWorklist = NULL;
-G_nodeList2 spillWorklist = NULL;
-G_nodeList2 spilledNodes  = NULL;
-G_nodeList2 coalescedNodes = NULL;
-G_nodeList2 coloredNodes = NULL;
-G_nodeList2 selectStack = NULL;
+static G_nodeList2 precolored = NULL;
+static G_nodeList2 simplifyWorklist = NULL;
+static G_nodeList2 freezeWorklist = NULL;
+static G_nodeList2 spillWorklist = NULL;
+static G_nodeList2 spilledNodes  = NULL;
+static G_nodeList2 coalescedNodes = NULL;
+static G_nodeList2 coloredNodes = NULL;
+static G_nodeList2 selectStack = NULL;
 
 static Live_moveList2 coalescedMoves = NULL;
 static Live_moveList2 constraintMoves = NULL;
@@ -34,6 +34,7 @@ static TAB_table moveList = NULL;
 static TAB_table alias = NULL;
 static Temp_map color = NULL;
 static TAB_table G_nodeMapG_node2 = NULL;
+static Temp_tempList registers = NULL;
 
 void initAdjSet(int n){
 	adjSet = checked_malloc(n*n*sizeof(bool));
@@ -56,7 +57,7 @@ void initDegree(int n){
 		degree[i] = 0;
 	}
 }
-void init(int n, Temp_map inital,int k){
+void init(int n, Temp_map inital,Temp_tempList regs){
         precolored = NULL;
         simplifyWorklist = NULL;
         freezeWorklist = NULL;
@@ -71,7 +72,7 @@ void init(int n, Temp_map inital,int k){
         worklistMoves = NULL;
         activeMoves = NULL;
 	length = n;
-	K = k;
+	K = lengthOfTempList(regs);
 	initAdjSet(n);
 	initAdjList(n);
 	initDegree(n);
@@ -79,6 +80,7 @@ void init(int n, Temp_map inital,int k){
 	alias = TAB_empty();
 	color = inital;
 	G_nodeMapG_node2 = TAB_empty();
+        registers = regs;
 }
 G_node2 G_Node2(G_node node){
 	G_node2 g_node2 = checked_malloc(sizeof(*g_node2));
@@ -619,16 +621,16 @@ static Stringlist StringList(string node,Stringlist pre,Stringlist next){
 }
 static Stringlist allColors(){
 	Stringlist head = NULL,tail = NULL;
-	G_nodeList2 g_nodeList2 = precolored;
-	while(g_nodeList2!=NULL){
-		string node = Temp_look(color,g_nodeList2->value->node->info);
+	Temp_tempList regs = registers;
+	while(regs!=NULL){
+		string node = Temp_look(color,regs->head);
 		Stringlist temp  = StringList(node,tail,NULL);
 		if(tail == NULL){
 			head = tail = temp;
 		}else{
 			tail = tail->next = temp;
 		}
-		g_nodeList2 = g_nodeList2->next;
+                regs = regs->tail;
 	}
 	return head;
 }
@@ -671,12 +673,12 @@ COL_result COL_color(Live_graph ig, Temp_map inital, Temp_tempList regs){
 	G_graph graph = ig->graph;
 	Live_moveList moves = ig->moves;
 	G_nodeList g_nodeList = G_nodes(graph);
-	init(graph->nodecount, inital,lengthOfTempList(regs));
+	init(graph->nodecount, inital,regs);
 	G_nodeList2 g_nodeList2 = NULL;
 	while (g_nodeList != NULL){
 		G_node g_node = g_nodeList->head;
                 G_node2 g_node2 = G_Node2(g_node);
-		if (Temp_look(inital,g_node->info)!=NULL){
+                if (Temp_look(inital,g_node->info)!=NULL){
                   append1(&precolored,g_node2);
                 }else{
 			append1(&g_nodeList2, g_node2);
