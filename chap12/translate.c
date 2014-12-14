@@ -4,6 +4,7 @@
 #include "symbol.h"
 #include "absyn.h"
 #include "temp.h"
+#include "table.h"
 #include "tree.h"
 #include "assem.h"
 #include "frame.h"
@@ -426,9 +427,17 @@ Tr_exp Tr_intExp(int n){
 static F_fragList stringList = NULL;
 static F_fragList procList = NULL;
 Tr_exp Tr_stringExp(string str){
-  Temp_label temp_label = Temp_newlabel();
-  F_frag f_frag = F_StringFrag(temp_label,str);
-  stringList = F_FragList(f_frag,stringList);
+  static TAB_table table = NULL;
+  if(table==NULL){
+    table = TAB_empty();
+  }
+  S_symbol s_symbol = S_Symbol(str);
+  Temp_label temp_label = TAB_look(table,s_symbol);
+  if(temp_label==NULL){
+    temp_label = Temp_newlabel();
+    F_frag f_frag = F_StringFrag(temp_label,str);
+    stringList = F_FragList(f_frag,stringList);
+  }
   return Tr_Ex(T_Name(temp_label));
 }
 Tr_exp Tr_nilExp(){

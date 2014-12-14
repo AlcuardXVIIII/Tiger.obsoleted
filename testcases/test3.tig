@@ -2,6 +2,7 @@
 let
 	type  rectype = {name:string, age:int}
 	var rec1:rectype := rectype {name="Nobody", age=1000}
+        var rec2:string := "Nobody"
         var var1:int := 3
         var var3:int:=4
 in

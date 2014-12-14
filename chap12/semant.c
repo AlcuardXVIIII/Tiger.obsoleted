@@ -222,13 +222,13 @@ Tr_expty transExp(Tr_level level,S_table venv,S_table tenv,A_exp a){
         if(a_efield->name != ty_field->name){
           EM_error(a->pos,"field-name mismatched");
         }
-        Ty_ty ty_ty = transExp(level,venv,tenv,a_efield->exp)->ty;
+        Tr_expty tr_expty = transExp(level,venv,tenv,a_efield->exp);
+        Ty_ty ty_ty =  tr_expty->ty;
         Ty_ty actual_fieldTy = actualTy(ty_field->ty);
         if(!assertSameType(actual_fieldTy,ty_ty)){
           EM_error(a->pos,"type mismatched");
           return Expty(NULL,actual_ty);
         }
-        Tr_expty tr_expty = transExp(level,venv,tenv,a_efield->exp);
         t_expList = Tr_ExpList(tr_expty->exp,t_expList);
         a_efields = a_efields->tail;
         ty_fieldList = ty_fieldList->tail;
