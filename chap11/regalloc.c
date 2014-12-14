@@ -102,7 +102,7 @@ static void removeRedundantMoves(Temp_map m,AS_instrList il){
 RA_result RA_regAlloc(F_frame f,AS_instrList il){
   G_graph g_graph = FG_AssemFlowGraph(il);
   Live_graph live_graph = Live_liveness(g_graph);
-  Temp_map initial = F_precolored();
+  Temp_map initial = Temp_layerMap(Temp_empty(),F_precolored());
   Temp_tempList regs = F_registers();
   COL_result col_result = COL_color(live_graph,initial,regs);
   int i = 0;
